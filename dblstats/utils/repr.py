@@ -19,4 +19,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__version__ = "v0.0.0"
+
+def represents(obj: object) -> str:
+    return f"<{obj.__class__.__name__} {' '.join(list(map(lambda p : f'{p[0]}={p[1]}', vars(obj).items())))}>"
