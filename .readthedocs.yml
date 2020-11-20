@@ -17,3 +17,4 @@ python:
       extra_requirements:
         - docs
         - sphinx_rtd_theme
+        - aiohttp
