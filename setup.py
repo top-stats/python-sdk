@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='dblstats',
-    packages=['dblstats'],
+    packages=['dblstats', 'dblstats.objects', 'dblstats.utils'],
     version=__version__,
     license='MIT',
     description='A python dblstats.com API wrapper.',
