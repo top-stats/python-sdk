@@ -22,6 +22,6 @@ SOFTWARE.
 __version__ = "v0.0.0"
 
 from .objects import exceptions
-from .objects.dblstats_client import Client
+from .objects.dblstats_client import Client, Sorter
 
 errors = exceptions

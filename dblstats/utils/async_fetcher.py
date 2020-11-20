@@ -23,7 +23,7 @@ from json import loads
 import aiohttp
 
 from .endpoints import BASE_URL
-from ..objects.exceptions import UnknownException, InvalidAuthorizationToken
+from ..objects.exceptions import UnknownException, InvalidAuthorizationToken, InvalidTarget
 
 
 class AsyncFetcher:
@@ -42,6 +42,8 @@ class AsyncFetcher:
             raise InvalidAuthorizationToken(message.get("message") or "No token has been provided!")
         elif res.status == 401 or message.get("status") == 401:
             raise InvalidAuthorizationToken(message.get("message") or "An invalid token has been provided!")
+        elif res.status == 404 or message.get("status") == 404:
+            raise InvalidTarget(message.get("message") or "Could not find the requested target!")
         raise UnknownException("Oops, an unknown exception got raised. Please report this to our github page "
                                "(https://github.com/Arthurdw/dblstats/issues) and provide the following content:"
                                f"Unhandled response code: {res.status or message.get('status')} "

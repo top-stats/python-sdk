@@ -19,12 +19,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from datetime import datetime
-from typing import Union
+from enum import Enum
+from typing import Union, List
 
-from .bot import Bot
+from .bot import Bot, BotHistory
 from .dblstats_auctions import Auctions
+from .user import UserBots
 from ..utils import represents, AsyncFetcher, endpoints
+from ..utils.convertors import parse_bot_base_object, parse_bot_object, parse_user_base_object
+
+
+class Sorter(Enum):
+    """
+    :attr votes: Sorts by most voted
+    :attr monthly_votes: Sorts by most voted from this month
+    :attr servers: Sorts by most servers
+    :attr shards: Sorts by most shards
+    """
+    votes = "votes"
+    monthly_votes = "monthly votes"
+    servers = "servers"
+    shards = "shards"
 
 
 class Client:
@@ -48,10 +63,35 @@ class Client:
         :param id: The id of the bot that must be fetched.
         """
         bot = await self.__fetcher.get(endpoints.GET_BOT_URL.format(id=id))
-        return Bot(bot["certified"], list(map(lambda i: int(i), bot.get("owners"))), bot.get("deleted"), bot.get("id"),
-                   bot.get("name"), bot.get("def_avatar"), bot.get("avatar"), bot.get("short_desc"), bot.get("lib"),
-                   bot.get("prefix"), bot.get("website"),
-                   datetime.strptime(bot.get("approved_at"), "%Y-%m-%dT%H:%M:%S.%fZ"), bot.get("monthly_votes"),
-                   bot.get("server_count"), bot.get("total_votes"), bot.get("shard_count"),
-                   bot.get("monthly_votes_rank"), bot.get("server_count_rank"), bot.get("total_votes_rank"),
-                   bot.get("shard_count_rank"), datetime.strptime(bot.get("timestamp"), "%Y-%m-%dT%H:%M:%S.%fZ"))
+        return parse_bot_object(bot)
+
+    async def get_bot_history(self, id: Union[int, str]) -> BotHistory:
+        """
+        Fetch a bot its history from the dblstatistics website.
+
+        :param id: The id of the bot that must be fetched.
+        """
+        history = await self.__fetcher.get(endpoints.GET_BOT_HISTORY_URL.format(id=id))
+        return BotHistory(history.get("id"), list(map(parse_bot_base_object, history.get("data"))))
+
+    async def get_top_bots(self, sort_by: Sorter = Sorter.votes) -> List[Bot]:
+        """
+        Returns a collection of sorted dblstats Bot objects.
+
+        :param sort_by: The way the bots should get sorted, default is by votes.
+        """
+        if not isinstance(sort_by, Sorter):
+            raise TypeError(f"Can not use type `{type(sort_by)}` to sort bots. Please use the `dblstats.Sorter` enum!")
+
+        bots = await self.__fetcher.get(endpoints.GET_TOP_BOTS.format(value=sort_by.value))
+        return list(map(parse_bot_object, bots))
+
+    async def get_user_bots(self, id: Union[int, str]) -> UserBots:
+        """
+        Returns all bots from a user. (As a UserBots object)
+
+        :param id: The user from which the bots should be fetched.
+        """
+        user_bots = await self.__fetcher.get(endpoints.GET_USER_BOTS.format(id=id))
+        print(user_bots)
+        return UserBots(parse_user_base_object(user_bots["user"]), list(map(parse_bot_object, user_bots["bots"])))

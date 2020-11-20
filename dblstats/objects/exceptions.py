@@ -37,3 +37,8 @@ class UnknownException(DBLStatsException):
 class InvalidAuthorizationToken(DBLStatsException):
     """The exception that get raised when no or an invalid client token has been provided."""
     pass
+
+
+class InvalidTarget(DBLStatsException):
+    """The exception that get raised when the requested target does not exist."""
+    pass

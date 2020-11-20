@@ -19,7 +19,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Union
 
 from .user import UserBase
 from ..utils import represents, endpoints, AsyncFetcher
@@ -82,21 +82,22 @@ class Auctions:
         return AuctionTag(tags["bot"], tags["server"])
 
     @staticmethod
-    def __get_auction_users(database) -> Dict[str, List[AuctionUser]]:
+    def parse_user_base_obj(data: Dict[str, Union[Dict[str, str], str, bool]]) -> AuctionUser:
+        return AuctionUser(data["user"].get("id"), data["user"].get("tag"), data["user"].get("avatar"),
+                           data["user"].get("def_avatar"), data.get("product"), data.get("tag"),
+                           data.get("list"), data.get("amount"), data.get("outbid"),
+                           datetime.strptime(data.get("timestamp"), "%Y-%m-%dT%H:%M:%S.%fZ"),
+                           data.get("is_fake"))
+
+    def parse_auction_users(self, database: Dict[str, List[Dict[str, Union[bool, int, Dict[str, str]]]]]) -> \
+            Dict[str, List[AuctionUser]]:
         data = {}
         for key, collection in database:
-            _data = []
-            for value in collection:
-                _data.append(AuctionUser(value["user"].get("id"), value["user"].get("tag"), value["user"].get("avatar"),
-                                         value["user"].get("def_avatar"), value.get("product"), value.get("tag"),
-                                         value.get("list"), value.get("amount"), value.get("outbid"),
-                                         datetime.strptime(value.get("timestamp"), "%Y-%m-%dT%H:%M:%S.%fZ"),
-                                         value.get("is_fake")))
-            data[key] = _data
+            data[key] = list(map(self.parse_user_base_obj, collection))
         return data
 
     async def get_current(self) -> AuctionCurrent:
         """Returns a dictionary of all current betters."""
         data = await self.__fetcher.get(endpoints.GET_AUCTIONS_CURRENT)
-        return AuctionCurrent(self.__get_auction_users(data["bot"].items()),
-                              self.__get_auction_users(data["server"].items()))
+        return AuctionCurrent(self.parse_auction_users(data["bot"].items()),
+                              self.parse_auction_users(data["server"].items()))

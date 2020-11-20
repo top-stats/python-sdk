@@ -18,7 +18,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
 from typing import Union
 
 from discord import Intents, Member, User
@@ -28,8 +27,11 @@ from utilsx.discord.objects import Footer, Field
 
 import dblstats
 
-DISCORD_BOT_TOKEN = "XXXYOURTOKENHEREXXX"
-DBLSTATS_TOKEN = "XXXYOURTOKENHEREXXX"
+# DISCORD_BOT_TOKEN = "XXXYOURTOKENHEREXXX"
+# DBLSTATS_TOKEN = "XXXYOURTOKENHEREXXX"
+
+DISCORD_BOT_TOKEN = "NjQwNjI1NjgzNzk3NjM5MTgx.Xb8jKQ.8K1Go9D4jjZxpqOdrxLyK_r0Hes"
+DBLSTATS_TOKEN = "1632c2ca3352763002ad2c20ae87b856c6d694bd2c31632079a3e2efa508062dc8ed16008ccac4cb0fdde636"
 
 
 class Bot(BotX):
@@ -53,7 +55,10 @@ class DBLStatsExtension(Cog):
             return await self.embed(ctx, "Please provide a target!")
 
         id = target if isinstance(target, int) else target.id
-        bot = await self.dblstats.get_bot(id)
+        try:
+            bot = await self.dblstats.get_bot(id)
+        except dblstats.errors.InvalidTarget:
+            return await self.embed(ctx, "Oops, could not find that bot on Top.gg!")
         field_message = f"Owners: {', '.join(['<@' + str(owner) + '>' for owner in bot.owners])}\n" \
                         f"Library: `{bot.library}`\n" \
                         f"Prefix: `{bot.prefix}`\n" \
@@ -67,6 +72,23 @@ class DBLStatsExtension(Cog):
         await self.embed(ctx, bot.short_description, title=f"About {bot.name}:",
                          footer=Footer(text=bot.website, icon_url=bot.avatar),
                          fields=[Field(name="Top.gg Information", value=field_message)])
+
+    @commands.command(name="bots", aliases=["about"])
+    async def bots(self, ctx: commands.Context, target: Union[Member, User, int] = None):
+        if target is None:
+            return await self.embed(ctx, "Please provide a author!")
+
+        id = target if isinstance(target, int) else target.id
+        try:
+            user_bots = await self.dblstats.get_user_bots(id)
+        except dblstats.errors.InvalidTarget:
+            return await self.embed(ctx, "Oops, could not find that user on Top.gg!")
+        user = user_bots.user
+        bots = user_bots.bots
+
+        message = f"Bots ({len(bots)})\n" + "\n".join(
+            [f"[{bot.name}]({bot.website or 'https://top.gg/bot/' + bot.id})" for bot in bots])
+        await self.embed(ctx, message, title=f"About {user.tag}:", footer=Footer(icon_url=user.avatar))
 
 
 if __name__ == "__main__":
