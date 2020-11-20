@@ -19,5 +19,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .bot import *
-from .user import *
+from ..utils import represents
+
+
+class UserBase:
+    """Represents the base of a top.gg user."""
+    def __init__(self, id: str, tag: str, avatar: str, default_avatar: str):
+        """
+        Creates a new Top.gg user base.
+
+        :param id: The user their discord id
+        :param tag: The user their discord tag (username#discriminator)
+        :param avatar: The user their discord avatar url
+        :param default_avatar: The user their default discord avatar url (calculated by discriminator)
+        """
+        self.id = id
+        self.tag = tag
+        self.avatar = f"https://cdn.discordapp.com/avatars/{id}/{avatar}.webp"
+        self.default_avatar = default_avatar
+
+    def __repr__(self):
+        return represents(self)

@@ -19,5 +19,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .bot import *
-from .user import *
+
+class DBLStatsException(Exception):
+    """The base class for all dblstats exceptions."""
+    pass
+
+
+class UnknownException(DBLStatsException):
+    """
+    Gets raised when the developer didn't anticipate for something.
+    If this gets raised, please report this to our github:
+    https://github.com/Arthurdw/dblstats/issues
+    """
+    pass
+
+
+class InvalidAuthorizationToken(DBLStatsException):
+    """The exception that get raised when no or an invalid client token has been provided."""
+    pass

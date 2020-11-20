@@ -20,6 +20,7 @@ SOFTWARE.
 """
 from datetime import datetime
 from typing import List
+
 from ..utils import represents
 
 
@@ -108,6 +109,7 @@ class BotHistory:
 
     The maximum collection size is 500
     """
+
     def __init__(self, id: str, history: List[BotBase]):
         """
         Creates a dblstats BotHistory object.

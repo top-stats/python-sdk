@@ -19,5 +19,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .bot import *
-from .user import *
+from .dblstats_auctions import Auctions
+from ..utils import represents, AsyncFetcher
+
+
+class Client:
+    """
+    Represents your dblstatistics.com client.
+
+    This interacts with the api, so it allows you to fetch data.
+    """
+
+    def __init__(self, token: str):
+        self.__fetcher = AsyncFetcher(token)
+        self.auctions = Auctions(self.__fetcher)
+
+    def __repr__(self):
+        return represents(self)
