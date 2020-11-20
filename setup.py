@@ -26,12 +26,12 @@ setup(
         "discord.py"
     ],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        # 'Development Status :: 2 - Pre-Alpha',
         # Development statuses:
         # Development Status :: 1 - Planning
         # Development Status :: 2 - Pre-Alpha
         # Development Status :: 3 - Alpha
-        # Development Status :: 4 - Beta
+        'Development Status :: 4 - Beta',
         # Development Status :: 5 - Production/Stable
         # Development Status :: 6 - Mature
         # Development Status :: 7 - Inactive
@@ -41,5 +41,6 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
 )
