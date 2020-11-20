@@ -24,7 +24,7 @@ copyright = '2020, Arthurdw'
 author = 'Arthurdw'
 
 # The full version, including alpha/beta/rc tagsversion = ''
-with open('../../dblstats/__init__.py') as f:
+with open('./dblstats/__init__.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 release = version
@@ -59,3 +59,5 @@ html_theme = 'bizstyle'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+autodoc_mock_imports = ["aiohttp"]
