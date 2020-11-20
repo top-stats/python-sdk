@@ -95,7 +95,7 @@ class Auctions:
             data[key] = _data
         return data
 
-    async def get_current(self):
+    async def get_current(self) -> AuctionCurrent:
         """Returns a dictionary of all current betters."""
         data = await self.__fetcher.get(endpoints.GET_AUCTIONS_CURRENT)
         return AuctionCurrent(self.__get_auction_users(data["bot"].items()),
