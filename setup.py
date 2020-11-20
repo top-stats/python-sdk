@@ -23,7 +23,7 @@ setup(
     download_url=f'https://github.com/Arthurdw/dblstats/archive/{__version__}.tar.gz',
     keywords=["dbl", "stats", "statistics", "dblstatistics.com"],
     install_requires=[
-        "discord.py"
+        "aiohttp"
     ],
     classifiers=[
         # 'Development Status :: 2 - Pre-Alpha',
