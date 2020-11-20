@@ -17,7 +17,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__version__ = "v0.1.2"
+__version__ = "v0.1.3"
 
 from .objects import exceptions
 from .objects.dblstats_client import Client, Sorter
