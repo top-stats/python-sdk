@@ -60,4 +60,4 @@ html_theme = 'bizstyle'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-autodoc_mock_imports = ["aiohttp"]
+autodoc_mock_imports = ["aiohttp", "six"]
