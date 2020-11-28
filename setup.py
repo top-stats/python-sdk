@@ -1,7 +1,7 @@
 from distutils.core import setup
 from os import path
 
-from .dblstats.version import version
+from dblstats.version import version
 
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:

@@ -3,6 +3,7 @@ README.rst
 setup.cfg
 setup.py
 dblstats\__init__.py
+dblstats\version.py
 dblstats\objects\__init__.py
 dblstats\objects\bot.py
 dblstats\objects\dblstats_auctions.py
