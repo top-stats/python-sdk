@@ -1,7 +1,7 @@
 from distutils.core import setup
 from os import path
 
-from dblstats import __version__
+from .dblstats.version import version
 
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
@@ -10,7 +10,7 @@ with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='dblstats',
     packages=['dblstats', 'dblstats.objects', 'dblstats.utils'],
-    version=__version__,
+    version=version,
     license='MIT',
     description='A python dblstats.com API wrapper.',
     # project_urls={
@@ -20,7 +20,7 @@ setup(
     author='Arthurdw',
     author_email='mail.arthurdw@gmail.com',
     url='https://github.com/Arthurdw/dblstats',
-    download_url=f'https://github.com/Arthurdw/dblstats/archive/{__version__}.tar.gz',
+    download_url=f'https://github.com/Arthurdw/dblstats/archive/{version}.tar.gz',
     keywords=["dbl", "stats", "statistics", "dblstatistics.com"],
     install_requires=[
         "aiohttp"
