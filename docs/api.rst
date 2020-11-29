@@ -6,7 +6,7 @@ The following section outlines the API of dblstatistics.com
 Version Related Info
 --------------------
 
-.. data:: __version__
+.. data:: dblstats.__version__
 
    A string representation of the version.
 
