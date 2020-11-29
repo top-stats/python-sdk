@@ -14,7 +14,7 @@ import os
 import sys
 import re
 
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -24,7 +24,7 @@ copyright = '2020, Arthurdw'
 author = 'Arthurdw'
 
 # The full version, including alpha/beta/rc tagsversion = ''
-with open('../../dblstats/__init__.py') as f:
+with open('../dblstats/__init__.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 release = version
