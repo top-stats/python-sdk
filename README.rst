@@ -60,7 +60,7 @@ execute the following command.
 Links
 ^^^^^
 
--  `Documentation <https://dblstats.readthedocs.io/>`__
+-  `Documentation <https://official-dblstats.readthedocs.io/en/latest/>`__
 -  `dblstatistics.com Discord Sever <https://discord.gg/Qd34uz7qDY>`__
 -  `dblstatistics.com
    documentation <https://dblstatistics.com/api/docs>`__

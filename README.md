@@ -48,6 +48,6 @@ the following command.
 
 ## Links
 
-* [Documentation](https://dblstats.readthedocs.io/)
+* [Documentation](https://official-dblstats.readthedocs.io/en/latest/)
 * [dblstatistics.com Discord Sever](https://discord.gg/Qd34uz7qDY)
 * [dblstatistics.com documentation](https://dblstatistics.com/api/docs)
