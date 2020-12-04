@@ -20,5 +20,5 @@
 from .objects import exceptions
 from .objects.dblstats_client import Client, Sorter
 
-__version__ = "v0.1.7"
+__version__ = "v0.1.8"
 errors = exceptions

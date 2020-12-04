@@ -32,15 +32,15 @@ setup(
     packages=['dblstats', 'dblstats.objects', 'dblstats.utils'],
     version=version,
     license='MIT',
-    description='A python dblstats.com API wrapper.',
+    description='A python dblstatistics.com API wrapper.',
     # project_urls={
     #     "Documentation": "WIP",
     # },
     long_description=long_description,
     author='Arthurdw',
-    author_email='mail.arthurdw@gmail.com',
-    url='https://github.com/Arthurdw/dblstats',
-    download_url=f'https://github.com/Arthurdw/dblstats/archive/{version}.tar.gz',
+    author_email='mail@arthurdw.com',
+    url='https://github.com/dbl-marcorennmaus-de/dblstats.py',
+    download_url=f'https://github.com/dbl-marcorennmaus-de/dblstats.py/archive/{version}.tar.gz',
     keywords=["dbl", "stats", "statistics", "dblstatistics.com"],
     install_requires=[
         "aiohttp"
@@ -51,8 +51,8 @@ setup(
         # Development Status :: 1 - Planning
         # Development Status :: 2 - Pre-Alpha
         # Development Status :: 3 - Alpha
-        'Development Status :: 4 - Beta',
-        # Development Status :: 5 - Production/Stable
+        # 'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         # Development Status :: 6 - Mature
         # Development Status :: 7 - Inactive
         'Intended Audience :: Developers',
