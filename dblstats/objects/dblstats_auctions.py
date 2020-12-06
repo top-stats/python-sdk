@@ -92,8 +92,6 @@ class Auctions:
     An object that can fetch the current Top.gg auctions
 
     :param fetcher: The :class AsyncFetcher: object. (Which will fetch the data from the API)
-
-    :property tags: Returns a cached :class AuctionTag:.
     """
 
     def __init__(self, fetcher: AsyncFetcher):
