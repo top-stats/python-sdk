@@ -44,6 +44,10 @@ class Client:
     Represents your dblstatistics.com client.
 
     This interacts with the api, so it allows you to fetch data.
+
+    :param token: Your secret dblstatistics.com API token.
+
+    :property auctions: An :class Auctions: which can be used to fetch all auction related data.
     """
 
     def __init__(self, token: str):
@@ -90,5 +94,4 @@ class Client:
         :param id: The user from which the bots should be fetched.
         """
         user_bots = await self.__fetcher.get(endpoints.GET_USER_BOTS.format(id=id))
-        print(user_bots)
         return UserBots(parse_user_base_object(user_bots["user"]), list(map(parse_bot_object, user_bots["bots"])))

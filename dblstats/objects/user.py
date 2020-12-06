@@ -23,17 +23,16 @@ from ..utils import represents
 
 
 class UserBase:
-    """Represents the base of a top.gg user."""
+    """
+    Represents the base of a top.gg user.
+
+    :param id: The user their discord id
+    :param tag: The user their discord tag (username#discriminator)
+    :param avatar: The user their discord avatar url
+    :param default_avatar: The user their default discord avatar url (calculated by discriminator)
+    """
 
     def __init__(self, id: str, tag: str, avatar: str, default_avatar: str):
-        """
-        Creates a new Top.gg user base.
-
-        :param id: The user their discord id
-        :param tag: The user their discord tag (username#discriminator)
-        :param avatar: The user their discord avatar url
-        :param default_avatar: The user their default discord avatar url (calculated by discriminator)
-        """
         self.id = id
         self.tag = tag
         self.avatar = f"https://cdn.discordapp.com/avatars/{id}/{avatar}.webp"
@@ -44,15 +43,14 @@ class UserBase:
 
 
 class UserBots:
-    """Represents a user with their corresponding bots."""
+    """
+    Represents a user with their corresponding bots.
+
+    :param user: The user that owns the bots.
+    :param bots: A collection of bots that are owned by the user.
+    """
 
     def __init__(self, user: UserBase, bots: List[Bot]):
-        """
-        Creates a new UserBot.
-
-        :param user: The user that owns the bots.
-        :param bots: A collection of bots that are owned by the user.
-        """
         self.user = user
         self.bots = bots
 

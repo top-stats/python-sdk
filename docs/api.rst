@@ -34,3 +34,9 @@ User
 
 .. automodule:: dblstats.objects.user
    :members:
+
+Exceptions
+----------
+
+.. automodule:: dblstats.objects.exceptions
+   :members:
