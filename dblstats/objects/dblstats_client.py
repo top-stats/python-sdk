@@ -46,6 +46,8 @@ class Client:
     This interacts with the api, so it allows you to fetch data.
 
     :param token: Your secret dblstatistics.com API token.
+
+    :property auctions: An :class Auctions: which can be used to fetch all auction related data.
     """
 
     def __init__(self, token: str):

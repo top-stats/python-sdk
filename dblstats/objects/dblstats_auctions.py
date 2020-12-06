@@ -92,24 +92,23 @@ class Auctions:
     An object that can fetch the current Top.gg auctions
 
     :param fetcher: The :class AsyncFetcher: object. (Which will fetch the data from the API)
+
+    :property tags: Returns a cached :class AuctionTag:.
     """
 
     def __init__(self, fetcher: AsyncFetcher):
         self.__fetcher = fetcher
-        self.tags = await self.get_tags()
 
     def __repr__(self):
         return represents(self)
 
     async def get_tags(self) -> AuctionTag:
         """
-        **THIS METHOD MAKES AN API CALL, IT IS RECOMMENDED TO USE THE TAGS PROPERTY INSTEAD**
         Fetches the latest tags from the API. This also updates the tags property for this class.
 
         :return AuctionTag: The latest bot and server tags.
         """
         tags = await self.__fetcher.get(endpoints.GET_AUCTIONS_TAGS)
-        self.tags = tags
         return AuctionTag(tags["bot"], tags["server"])
 
     @staticmethod
