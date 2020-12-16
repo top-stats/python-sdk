@@ -40,3 +40,9 @@ class InvalidAuthorizationToken(DBLStatsException):
 class InvalidTarget(DBLStatsException):
     """The exception that get raised when the requested target does not exist."""
     pass
+
+
+class InvalidProperty(DBLStatsException):
+    """The exception that gets raised when a property of the right type has been provided but is not allowed in that
+    method or class"""
+    pass

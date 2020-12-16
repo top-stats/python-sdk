@@ -16,11 +16,11 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from io import BytesIO
 from json import loads
 from typing import Union
 
 import aiohttp
-from io import BytesIO
 
 from .endpoints import BASE_URL
 from ..objects.exceptions import UnknownException, InvalidAuthorizationToken, InvalidTarget

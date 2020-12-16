@@ -17,6 +17,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from .objects import dblstats_widgets as widgets
 from .objects import exceptions
 from .objects.dblstats_client import Client, Sorter
 

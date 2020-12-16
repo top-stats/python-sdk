@@ -19,4 +19,4 @@
 
 
 def represents(obj: object) -> str:
-    return f"<{obj.__class__.__name__} {' '.join(list(map(lambda p : f'{p[0]}={p[1]}', vars(obj).items())))}>"
+    return f"<{obj.__class__.__name__} {' '.join(list(map(lambda p: f'{p[0]}={p[1]}', vars(obj).items())))}>"

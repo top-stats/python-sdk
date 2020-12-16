@@ -17,15 +17,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-BASE_URL = "https://dblstatistics.com"
+from typing import Union
 
-GET_BOT_URL = "/api/bots/{id}"
-GET_BOT_HISTORY_URL = "/api/bots/{id}/previous"
-GET_TOP_BOTS = "/api/bots/top?sortby={value}"
-GET_BOT_WIDGET = "/bot/{id}/widget/{type}"
 
-GET_AUCTIONS_CURRENT = "/api/auctions/current"
-GET_AUCTIONS_TAGS = "/api/auctions/tags"
-
-GET_USER_BOTS = "/api/users/{id}/bots"
-
+def get_value(value: str, default: Union[str, int, bool, None], **kwargs) -> Union[str, None]:
+    response = kwargs.get(value, default)
+    return response if response is None else str(response)

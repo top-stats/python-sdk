@@ -35,6 +35,12 @@ User
 .. automodule:: dblstats.objects.user
    :members:
 
+Widgets
+--------
+
+.. automodule:: dblstats.objects.dbl_stats_widgets
+   :members:
+
 Exceptions
 ----------
 
