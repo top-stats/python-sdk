@@ -128,11 +128,11 @@ class Client:
         An method which makes it easier to send the widget in a discord.py file.
 
         Example usage:
-        ```py
-        widget = widgets.Widget(widgets.WidgetType.servers)
-        file, name = await self.dblstats.get_widget_file(str(bot), widget)
-        await client.send_file(message.channel, fp=file, filename=name)
-        ```
+        .. code-block:: python
+
+            widget = widgets.Widget(widgets.WidgetType.servers)`
+            file, name = await self.dblstats.get_widget_file(str(bot), widget)
+            await client.send_file(message.channel, fp=file, filename=name)`
 
         :param id: The bot its ID
         :param widget: A widget object which contains the desired configuration.
