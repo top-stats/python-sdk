@@ -38,7 +38,7 @@ User
 Widgets
 --------
 
-.. automodule:: dblstats.objects.dbl_stats_widgets
+.. automodule:: dblstats.objects.dblstats_widgets
    :members:
 
 Exceptions
