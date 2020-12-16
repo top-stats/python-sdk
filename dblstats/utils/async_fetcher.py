@@ -61,7 +61,7 @@ class AsyncFetcher:
                     return BytesIO(await response.read())
                 return response
 
-    async def get(self, endpoint: str) -> dict[str, Union[str, int, bool, dict, list]]:
+    async def get(self, endpoint: str) -> dict[str, any]:
         """Sends an asynchronous get request to an endpoint and processes that."""
         return await self.process_response(await self.__get(endpoint))
 
