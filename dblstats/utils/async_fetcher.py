@@ -17,8 +17,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from json import loads
+from typing import Union
 
 import aiohttp
+from io import BytesIO
 
 from .endpoints import BASE_URL
 from ..objects.exceptions import UnknownException, InvalidAuthorizationToken, InvalidTarget
@@ -34,21 +36,35 @@ class AsyncFetcher:
     @staticmethod
     async def process_response(res: aiohttp.ClientResponse):
         message = loads(await res.text())
-        if res.status == 200 or message.get("status") == 200:
+
+        def has_status(code: int):
+            return res.status == code or message.get("status") == code
+
+        if has_status(200):
             return message
-        if res.status == 400 or message.get("status") == 400:
+        elif has_status(400):
             raise InvalidAuthorizationToken(message.get("message") or "No token has been provided!")
-        elif res.status == 401 or message.get("status") == 401:
+        elif has_status(401):
             raise InvalidAuthorizationToken(message.get("message") or "An invalid token has been provided!")
-        elif res.status == 404 or message.get("status") == 404:
+        elif has_status(404):
             raise InvalidTarget(message.get("message") or "Could not find the requested target!")
         raise UnknownException("Oops, an unknown exception got raised. Please report this to our github page "
                                "(https://github.com/Arthurdw/dblstats/issues) and provide the following content:"
                                f"Unhandled response code: {res.status or message.get('status')} "
                                f"({message.get('message')})")
 
-    async def get(self, endpoint):
-        """Sends an asynchronous get request to an endpoint"""
+    async def __get(self, endpoint: str, *, get_bytes: bool = False) -> Union[aiohttp.ClientResponse, BytesIO]:
+        """Async sender helper function"""
         async with aiohttp.ClientSession() as session:
             async with session.get(BASE_URL + endpoint, headers=self.__header) as response:
-                return await self.process_response(response)
+                if get_bytes:
+                    return BytesIO(await response.read())
+                return response
+
+    async def get(self, endpoint: str) -> dict[str, Union[str, int, bool, dict, list]]:
+        """Sends an asynchronous get request to an endpoint and processes that."""
+        return await self.process_response(await self.__get(endpoint))
+
+    async def get_image(self, endpoint: str) -> BytesIO:
+        """Sends an asynchronous get request to an endpoint and returns an BytesIO object."""
+        return await self.__get(endpoint, get_bytes=True)
