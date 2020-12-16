@@ -18,7 +18,7 @@
 # SOFTWARE.
 from io import BytesIO
 from json import loads
-from typing import Union, Any
+from typing import Union, Any, Dict
 
 import aiohttp
 
@@ -61,7 +61,7 @@ class AsyncFetcher:
                     return BytesIO(await response.read())
                 return response
 
-    async def get(self, endpoint: str) -> dict[str, Any]:
+    async def get(self, endpoint: str) -> Dict[str, Any]:
         """Sends an asynchronous get request to an endpoint and processes that."""
         return await self.process_response(await self.__get(endpoint))
 
