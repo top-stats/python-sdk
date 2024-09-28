@@ -2,9 +2,9 @@
 requires = ["setuptools"]
 
 [project]
-name = "dblstats"
+name = "topstats"
 version = "1.0.0"
-description = "The official Python API wrapper for dblstatistics.com."
+description = "The official Python API wrapper for topstats.gg."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "null8626" }]
@@ -30,5 +30,5 @@ classifiers = [
 requires-python = ">=3.8"
 
 [project.urls]
-Repository = "https://github.com/dbl-statistics/dblstats.py"
+Repository = "https://github.com/top-stats/topstats.py"
 "Support server" = "https://discord.gg/jjEauJXuZc"
