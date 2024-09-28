@@ -24,9 +24,9 @@ SOFTWARE.
 """
 
 from aiohttp import ClientSession, ClientTimeout
+from typing import Optional, Union, Tuple
 from asyncio import sleep
 from io import BytesIO
-from typing import Optional, Union
 
 class Client:
   """
@@ -40,7 +40,7 @@ class Client:
   :raises Error: If ``token`` is ``None``.
   """
 
-  __slots__ = ('__session', '__token')
+  __slots__: Tuple[str, ...] = ('__session', '__token')
 
   def __init__(self, token: str, *, session: Optional[ClientSession] = None):
     if not token:
