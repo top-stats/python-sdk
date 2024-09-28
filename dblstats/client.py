@@ -17,7 +17,7 @@ class Client:
 
   __slots__ = ('__session', '__token')
 
-  def __init__(self, token: str, *, session: Optional[ClientSession]):
+  def __init__(self, token: str, *, session: Optional[ClientSession] = None):
     if not token:
       raise Exception('An API token is required to use this API.')
 
