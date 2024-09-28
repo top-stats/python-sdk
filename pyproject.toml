@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools"]
+
+[project]
+name = "dblstats"
+version = "1.0.0"
+description = "The official Python API wrapper for dblstatistics.com."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "null8626" }]
+keywords = ["discord", "discord-bot", "topgg"]
+dependencies = ["aiohttp>=3.10.7"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Developers",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities"
+]
+requires-python = ">=3.8"
+
+[project.urls]
+Repository = "https://github.com/dbl-statistics/dblstats.py"
+"Support server" = "https://discord.gg/jjEauJXuZc"

@@ -1,5 +1,4 @@
-.idea/
+**/__pycache__/
+dblstats.egg-info/
 dist/
-dblstats/__pycache__/
-dblstats/objects/__pycache__/
-dblstats/utils/__pycache__/
+.ruff_cache/
