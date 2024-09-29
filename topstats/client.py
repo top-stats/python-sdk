@@ -28,6 +28,9 @@ from typing import Optional, Union, Tuple
 from asyncio import sleep
 from io import BytesIO
 
+from .errors import Error, RequestError
+
+
 class Client:
   """
   The class that lets you interact with the API.
@@ -44,35 +47,41 @@ class Client:
 
   def __init__(self, token: str, *, session: Optional[ClientSession] = None):
     if not token:
-      raise Exception('An API token is required to use this API.')
+      raise Error('An API token is required to use this API.')
 
     self.__session = session or ClientSession(timeout=ClientTimeout(total=5000.0))
     self.__token = token
-  
+
   async def __get(self, path: str, fetch_bytes: bool = False) -> Union[BytesIO, dict]:
     delay = 0.5
 
     while True:
       try:
         async with self.__session.get(
-          f'https://topstats.gg/api{path}',
-          headers={ 'Authorization': self.__token }
+          f'https://topstats.gg/api{path}', headers={'Authorization': self.__token}
         ) as resp:
-          json = {} if fetch_bytes else await resp.json()
-          
-          if resp.status >= 400:
-            raise Exception(f'Error {resp.status}: {json.get("message", "received invalid status code")}')
-          elif fetch_bytes:
+          json = {}
+
+          if not fetch_bytes:
+            try:
+              json = await resp.json()
+            except:
+              pass
+
+          resp.reason = json.get('message', resp.reason)
+          resp.raise_for_status()
+
+          if fetch_bytes:
             return BytesIO(await resp.read())
-          
+
           return json
-      except:
+      except Exception as err:
         if delay == 4:
-          raise
+          raise RequestError(err)
 
         await sleep(delay)
         delay *= 2
-  
+
   async def close(self):
     """Closes the :class:`Client` object. Nothing will happen if it's already closed."""
 

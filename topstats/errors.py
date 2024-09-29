@@ -23,12 +23,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .client import Client
-from .errors import Error, RequestError
+from typing import Tuple
 
-__title__ = 'topstats'
-__author__ = 'null8626'
-__license__ = 'MIT'
-__copyright__ = 'Copyright (c) 2020 Arthurdw; Copyright (c) 2024 null8626'
-__version__ = '1.0.0'
-__all__ = ('Client', 'Error', 'RequestError')
+
+class Error(Exception):
+  """Represents a ``topstats`` error class. Extends :py:class:`Exception`."""
+
+  __slots__: Tuple[str, ...] = ()
+
+
+class RequestError(Error):
+  """Thrown upon HTTP request failure. Extends :class:`Error`."""
+
+  __slots__: Tuple[str, ...] = ('__source',)
+
+  def __init__(self, source: Exception):
+    self.__source = source
+
+    super().__init__()
+
+  @property
+  def source(self) -> Exception:
+    """Returns the :class:`Exception` instance causing this exception. This source can be from any exception type. This property is read-only."""
+
+    return self.__source
