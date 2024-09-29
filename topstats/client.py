@@ -43,12 +43,13 @@ class Client:
   :raises Error: If ``token`` is ``None``.
   """
 
-  __slots__: Tuple[str, ...] = ('__session', '__token')
+  __slots__: Tuple[str, ...] = ('__own_session', '__session', '__token')
 
   def __init__(self, token: str, *, session: Optional[ClientSession] = None):
     if not token:
       raise Error('An API token is required to use this API.')
 
+    self.__own_session = session is None
     self.__session = session or ClientSession(timeout=ClientTimeout(total=5000.0))
     self.__token = token
 
@@ -83,9 +84,9 @@ class Client:
         delay *= 2
 
   async def close(self):
-    """Closes the :class:`Client` object. Nothing will happen if it's already closed."""
+    """Closes the :class:`Client` object. Nothing will happen if the client uses a pre-existing :class:`aiohttp.ClientSession` or if the session is already closed."""
 
-    if not self.__session.closed:
+    if self.__own_session and not self.__session.closed:
       await self.__session.close()
 
   async def __aenter__(self):
