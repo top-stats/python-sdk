@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Tuple
+from typing import Tuple, Optional
 
 
 class Error(Exception):
@@ -35,13 +35,13 @@ class Error(Exception):
 class RequestError(Error):
   """Thrown upon HTTP request failure. Extends :class:`Error`."""
 
-  __slots__: Tuple[str, ...] = ('source',)
+  __slots__: Tuple[str, ...] = ('message',)
 
-  source: Exception
-  """The :class:`Exception` instance causing this exception."""
+  message: Optional[str]
+  """The message returned from the topstats.gg API. This can be ``None``."""
 
-  def __init__(self, source: Exception):
-    self.source = source
+  def __init__(self, json: dict):
+    self.message = json['message']
 
     super().__init__()
 
@@ -54,7 +54,7 @@ class Ratelimited(RequestError):
   retry_after: int
   """How long you should wait until you can make a request to this endpoint again."""
 
-  def __init__(self, source: Exception, retry_after: int):
-    self.retry_after = retry_after
+  def __init__(self, json: dict):
+    self.retry_after = int(json['retry_after'])
 
-    super().__init__(source)
+    super().__init__(json)

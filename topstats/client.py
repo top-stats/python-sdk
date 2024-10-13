@@ -72,18 +72,18 @@ class Client:
             except:
               pass
 
-          resp.reason = json.get('message', resp.reason)
+          json['message'] = json.get('message', resp.reason)
           resp.raise_for_status()
 
           if fetch_bytes:
             return BytesIO(await resp.read())
 
           return json
-      except Exception as err:
+      except Exception:
         if json.get('code') == 429:
-          raise Ratelimited(err, int(json['retry_after']))
+          raise Ratelimited(json)
         elif delay == 4:
-          raise RequestError(err)
+          raise RequestError(json)
 
         await sleep(delay)
         delay *= 2
