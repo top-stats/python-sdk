@@ -26,6 +26,8 @@ SOFTWARE.
 import datetime
 from typing import Tuple, Union, List
 
+from .util import get_avatar
+
 
 class Ranked:
   """Represents a ranked data point in topstats.gg. This class contains a value and its rank compared to others."""
@@ -139,7 +141,7 @@ class Bot:
     self.owners = [int(i) for i in json['owners']]
     self.is_deleted = json['deleted']
     self.name = json['name']
-    self.avatar = ''  # TODO: handle this
+    self.avatar = get_avatar(json['avatar'], self.id)
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
