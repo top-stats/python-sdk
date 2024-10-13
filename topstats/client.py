@@ -28,6 +28,7 @@ from typing import Optional, Union, Tuple
 from asyncio import sleep
 from io import BytesIO
 
+from .bot import Bot
 from .errors import Error, RequestError, Ratelimited
 
 
@@ -56,7 +57,9 @@ class Client:
   def __repr__(self) -> str:
     return f'<{__class__.__name__} {self.__session!r}>'
 
-  async def __get(self, path: str, fetch_bytes: bool = False) -> Union[BytesIO, dict]:
+  async def __get(
+    self, path: str, fetch_bytes: bool = False
+  ) -> Optional[Union[BytesIO, dict]]:
     delay = 0.5
 
     while True:
@@ -80,13 +83,34 @@ class Client:
 
           return json
       except Exception:
-        if json.get('code') == 429:
+        code = json.get('code')
+
+        if code == 404:
+          return None
+        elif code == 429:
           raise Ratelimited(json)
         elif delay == 4:
           raise RequestError(json)
 
         await sleep(delay)
         delay *= 2
+
+  async def get_bot(self, id: int) -> Optional[Bot]:
+    """
+    Fetches a ranked bot from its ID.
+
+    :param id: The requested ranked bot's ID. This can be ``None``.
+    :type id: Optional[Bot]
+
+    :exception RequestError: If the aiohttp client session used by the :class:`Client` object is already closed, or if the :class:`Client` cannot send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+
+    :returns: The requested ranked bot. This can be ``None`` if it does not exist.
+    :rtype: Optional[Bot]
+    """
+
+    b = await self.__get(f'/bots/{id}')
+    return b and Bot(b)
 
   async def close(self) -> None:
     """Closes the :class:`Client` object. Nothing will happen if the client uses a pre-existing :class:`aiohttp.ClientSession` or if the session is already closed."""

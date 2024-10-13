@@ -2,3 +2,4 @@
 topstats.egg-info/
 dist/
 .ruff_cache/
+.vscode/

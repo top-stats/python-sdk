@@ -47,7 +47,7 @@ class RequestError(Error):
 
 
 class Ratelimited(RequestError):
-  """Thrown upon HTTP request failure due to being ratelimited. Extends :class:`RequestError`."""
+  """Thrown upon HTTP request failure due to being ratelimited and not allowed to make requests for a period of time. Extends :class:`RequestError`."""
 
   __slots__: Tuple[str, ...] = ('retry_after',)
 

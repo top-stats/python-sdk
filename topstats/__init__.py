@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from .bot import Bot
 from .client import Client
 from .errors import Error, RequestError, Ratelimited
 
@@ -31,4 +32,4 @@ __author__ = 'null8626'
 __license__ = 'MIT'
 __copyright__ = 'Copyright (c) 2020 Arthurdw; Copyright (c) 2024 null8626'
 __version__ = '1.0.0'
-__all__ = ('Client', 'Error', 'RequestError', 'Ratelimited')
+__all__ = ('Bot', 'Client', 'Error', 'RequestError', 'Ratelimited')
