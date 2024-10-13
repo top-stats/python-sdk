@@ -28,7 +28,7 @@ from typing import Optional, Union, Tuple
 from asyncio import sleep
 from io import BytesIO
 
-from .errors import Error, RequestError
+from .errors import Error, RequestError, Ratelimited
 
 
 class Client:
@@ -53,16 +53,19 @@ class Client:
     self.__session = session or ClientSession(timeout=ClientTimeout(total=5000.0))
     self.__token = token
 
+  def __repr__(self) -> str:
+    return f'<{__class__.__name__} {self.__session!r}>'
+
   async def __get(self, path: str, fetch_bytes: bool = False) -> Union[BytesIO, dict]:
     delay = 0.5
 
     while True:
+      json = {}
+
       try:
         async with self.__session.get(
-          f'https://topstats.gg/api{path}', headers={'Authorization': self.__token}
+          f'https://api.topstats.gg{path}', headers={'Authorization': self.__token}
         ) as resp:
-          json = {}
-
           if not fetch_bytes:
             try:
               json = await resp.json()
@@ -77,7 +80,9 @@ class Client:
 
           return json
       except Exception as err:
-        if delay == 4:
+        if json.get('code') == 429:
+          raise Ratelimited(err, int(json['retry_after']))
+        elif delay == 4:
           raise RequestError(err)
 
         await sleep(delay)

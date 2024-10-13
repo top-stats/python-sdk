@@ -44,3 +44,17 @@ class RequestError(Error):
     self.source = source
 
     super().__init__()
+
+
+class Ratelimited(RequestError):
+  """Thrown upon HTTP request failure due to being ratelimited. Extends :class:`RequestError`."""
+
+  __slots__: Tuple[str, ...] = ('retry_after',)
+
+  retry_after: int
+  """How long you should wait until you can make a request to this endpoint again."""
+
+  def __init__(self, source: Exception, retry_after: int):
+    self.retry_after = retry_after
+
+    super().__init__(source)
