@@ -44,10 +44,10 @@ class Ranked:
     self.value = json[key]
     self.rank = json[f'{key}_rank']
 
-  def __int__(self):
+  def __int__(self) -> int:
     return self.value
 
-  def __str__(self):
+  def __str__(self) -> str:
     return str(self.value)
 
   def __eq__(self, other: Union['Ranked', int]) -> bool:
@@ -65,7 +65,7 @@ class Ranked:
   def __ge__(self, other: Union['Ranked', int]) -> bool:
     return self.value >= int(other)
 
-  def __repr__(self):
+  def __repr__(self) -> str:
     return f'<{__class__.__name__}({self.value}, #{self.rank})>'
 
 
