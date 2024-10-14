@@ -9,7 +9,7 @@ author = 'null8626'
 
 copyright = ''
 with open('../LICENSE', 'r') as f:
-  copyright = re.search(r"\d{4} null8626", f.read()).group()
+  copyright = re.search(r'\d{4} null8626', f.read()).group()
 
 version = ''
 with open('../topstats/__init__.py', 'r') as f:
@@ -24,9 +24,7 @@ intersphinx_mapping = {
   'aio': ('https://docs.aiohttp.org/en/stable/', None),
 }
 
-redirects = {
-  'repository': 'https://github.com/top-stats/dblstats.py'
-}
+redirects = {'repository': 'https://github.com/top-stats/dblstats.py'}
 
 html_css_files = [
   'style.css',
