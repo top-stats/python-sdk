@@ -37,11 +37,11 @@ class Client:
   The class that lets you interact with the API.
 
   :param token: The API token to use with the API.
-  :type token: str
-  :param session: Whether to use an existing aiohttp client session for requesting or not. Defaults to ``None`` (creates a new one instead)
+  :type token: :py:class:`str`
+  :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: Optional[:class:`~aiohttp.ClientSession`]
 
-  :raises Error: If ``token`` is ``None``.
+  :raises Error: If ``token`` is :py:obj:`None`.
   """
 
   __slots__: Tuple[str, ...] = ('__own_session', '__session', '__token')
@@ -99,21 +99,21 @@ class Client:
     """
     Fetches a ranked bot from its ID.
 
-    :param id: The requested ranked bot's ID. This can be ``None``.
-    :type id: int
+    :param id: The requested ranked bot's ID. This can be :py:obj:`None`.
+    :type id: :py:class:`int`
 
-    :exception RequestError: If the aiohttp client session used by the :class:`~.Client` object is already closed, or if the :class:`~.Client` cannot send a web request to the web server.
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
 
-    :returns: The requested ranked bot. This can be ``None`` if it does not exist.
-    :rtype: Optional[:class:`~.bot.Bot`]
+    :returns: The requested ranked bot. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[:class:`.Bot`]
     """
 
     b = await self.__get(f'/bots/{id}')
     return b and Bot(b)
 
   async def close(self) -> None:
-    """Closes the :class:`~.Client` object. Nothing will happen if the client uses a pre-existing :class:`~aiohttp.ClientSession` or if the session is already closed."""
+    """Closes the :class:`.Client` object. Nothing will happen if the client uses a pre-existing :class:`~aiohttp.ClientSession` or if the session is already closed."""
 
     if self.__own_session and not self.__session.closed:
       await self.__session.close()

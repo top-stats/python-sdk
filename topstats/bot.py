@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import datetime
+from datetime import datetime, timezone
 from typing import Tuple, Union, List
 
 from .util import get_avatar
@@ -172,6 +172,6 @@ class Bot:
   def created_at(self) -> datetime:
     """The bot's creation time in UTC."""
 
-    return datetime.datetime.fromtimestamp(
-      ((self.id >> 22) + 1420070400000) // 1000, tz=datetime.timezone.utc
+    return datetime.fromtimestamp(
+      ((self.id >> 22) + 1420070400000) // 1000, tz=timezone.utc
     )

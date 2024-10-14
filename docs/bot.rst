@@ -1,5 +1,5 @@
 Bot reference
 =============
 
-.. autoclass:: topstats.bot.Bot
+.. autoclass:: topstats.bot.Bot()
    :members:

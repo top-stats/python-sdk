@@ -33,12 +33,12 @@ class Error(Exception):
 
 
 class RequestError(Error):
-  """Thrown upon HTTP request failure. Extends :class:`~.errors.Error`."""
+  """Thrown upon HTTP request failure. Extends :class:`.Error`."""
 
   __slots__: Tuple[str, ...] = ('message',)
 
   message: Optional[str]
-  """The message returned from the topstats.gg API. This can be ``None``."""
+  """The message returned from the topstats.gg API. This can be :py:obj:`None`."""
 
   def __init__(self, json: dict):
     self.message = json['message']
@@ -47,7 +47,7 @@ class RequestError(Error):
 
 
 class Ratelimited(RequestError):
-  """Thrown upon HTTP request failure due to being ratelimited and not allowed to make requests for a period of time. Extends :class:`~.errors.RequestError`."""
+  """Thrown upon HTTP request failure due to being ratelimited and not allowed to make requests for a period of time. Extends :class:`.RequestError`."""
 
   __slots__: Tuple[str, ...] = ('retry_after',)
 

@@ -17,18 +17,6 @@ if (document.querySelector('section#topstats')) {
   tocDrawer.remove()
 } else {
   tocDrawer.style.visibility = 'visible'
-  
-  const enumProperties = [...document.querySelectorAll('.property')].filter(x => x.parentElement.children.length === 3)
-
-  for (const enumProperty of enumProperties) {
-    // we don't need to display enum values
-    enumProperty.children[3].innerText = '...'
-    
-    // kill the rest of the children >:)
-    for (let i = 4; i < enumProperty.children.length; i++) {
-      enumProperty.children[i].remove() // eslint-disable-line
-    }
-  }
 }
 
 // remove related pages in the footer

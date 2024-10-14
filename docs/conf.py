@@ -24,7 +24,10 @@ intersphinx_mapping = {
   'aio': ('https://docs.aiohttp.org/en/stable/', None),
 }
 
-redirects = {'repository': 'https://github.com/top-stats/dblstats.py'}
+redirects = {
+  'repository': 'https://github.com/top-stats/dblstats.py',
+  'raw-api-reference': 'https://docs.topstats.gg/',
+}
 
 html_css_files = [
   'style.css',
