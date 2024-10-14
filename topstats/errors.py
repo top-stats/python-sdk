@@ -27,13 +27,13 @@ from typing import Tuple, Optional
 
 
 class Error(Exception):
-  """Represents a ``topstats`` error class. Extends :py:class:`Exception`."""
+  """Represents a topstats error class. Extends :py:class:`Exception`."""
 
   __slots__: Tuple[str, ...] = ()
 
 
 class RequestError(Error):
-  """Thrown upon HTTP request failure. Extends :class:`Error`."""
+  """Thrown upon HTTP request failure. Extends :class:`~.errors.Error`."""
 
   __slots__: Tuple[str, ...] = ('message',)
 
@@ -47,7 +47,7 @@ class RequestError(Error):
 
 
 class Ratelimited(RequestError):
-  """Thrown upon HTTP request failure due to being ratelimited and not allowed to make requests for a period of time. Extends :class:`RequestError`."""
+  """Thrown upon HTTP request failure due to being ratelimited and not allowed to make requests for a period of time. Extends :class:`~.errors.RequestError`."""
 
   __slots__: Tuple[str, ...] = ('retry_after',)
 
