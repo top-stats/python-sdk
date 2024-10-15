@@ -145,15 +145,15 @@ class Bot:
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
-    self.approved_at = datetime.datetime.strptime(
+    self.approved_at = datetime.strptime(
       json['approved_at'], '%Y-%m-%dT%H:%M:%S.%fZ'
     )
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.server_count = Ranked(json, 'server_count')
     self.total_votes = Ranked(json, 'total_votes')
     self.shard_count = json['shard_count']
-    self.timestamp = datetime.datetime.fromtimestamp(
-      int(json['unix_timestamp']) // 1000, tz=datetime.timezone.utc
+    self.timestamp = datetime.fromtimestamp(
+      int(json['unix_timestamp']) // 1000, tz=timezone.utc
     )
 
   def __int__(self) -> int:
