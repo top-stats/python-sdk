@@ -153,7 +153,7 @@ class Client:
     :returns: The requested list of historical total votes entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data('monthly_votes', id, period)
+    return await self.__get_historical_data('total_votes', id, period)
 
   async def get_bot_historical_server_count(
     self, id: int, period: Optional[Period]
