@@ -121,13 +121,13 @@ class Client:
     return b and Bot(b)
 
   async def __get_historical_data(
-    self, kind: str, cls: Type[PossibleHistoryEntry], id: int, period: Period
+    self, cls: Type[PossibleHistoryEntry], id: int, period: Period
   ) -> Optional[List[PossibleHistoryEntry]]:
     if not isinstance(period, Period):
       period = Period.ALL_TIME
 
     response = await self.__get(
-      f'/api/bots/{id}/historical?timeFrame={period.value}&type={kind}'
+      f'/bots/{id}/historical?timeFrame={period.value}&type={cls.__slots__[0]}'
     )
 
     return [cls(data) for data in (response.get('data') or ())]
@@ -149,9 +149,7 @@ class Client:
     :returns: The requested list of historical monthly votes entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.MonthlyVotesHistoryEntry`]]
     """
-    return await self.__get_historical_data(
-      'monthly_votes', MonthlyVotesHistoryEntry, id, period
-    )
+    return await self.__get_historical_data(MonthlyVotesHistoryEntry, id, period)
 
   async def get_bot_historical_total_votes(
     self, id: int, period: Optional[Period]
@@ -170,9 +168,7 @@ class Client:
     :returns: The requested list of historical total votes entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.TotalVotesHistoryEntry`]]
     """
-    return await self.__get_historical_data(
-      'total_votes', TotalVotesHistoryEntry, id, period
-    )
+    return await self.__get_historical_data(TotalVotesHistoryEntry, id, period)
 
   async def get_bot_historical_server_count(
     self, id: int, period: Optional[Period]
@@ -191,9 +187,7 @@ class Client:
     :returns: The requested list of historical server count entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.ServerCountHistoryEntry`]]
     """
-    return await self.__get_historical_data(
-      'server_count', ServerCountHistoryEntry, id, period
-    )
+    return await self.__get_historical_data(ServerCountHistoryEntry, id, period)
 
   async def get_bot_historical_shard_count(
     self, id: int, period: Optional[Period]
@@ -212,9 +206,7 @@ class Client:
     :returns: The requested list of historical shard count entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.ShardCountHistoryEntry`]]
     """
-    return await self.__get_historical_data(
-      'shard_count', ShardCountHistoryEntry, id, period
-    )
+    return await self.__get_historical_data(ShardCountHistoryEntry, id, period)
 
   async def close(self) -> None:
     """Closes the :class:`.Client` object. Nothing will happen if the client uses a pre-existing :class:`~aiohttp.ClientSession` or if the session is already closed."""
