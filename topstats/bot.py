@@ -117,7 +117,7 @@ class HistoryEntry(DataPoint):
     super().__init__(json[key])
 
   def __repr__(self) -> str:
-    return f'<{__class__.__name__}({self.value} at {self.timestamp.strftime("%Y/%m/%d %H:%M:%S")} UTC)>'
+    return f'<{__class__.__name__}({self.value} at {self.timestamp!r})>'
 
 
 class Bot:

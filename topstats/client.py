@@ -118,7 +118,7 @@ class Client:
     return [HistoryEntry(data, kind) for data in (response.get('data') or ())]
 
   async def get_bot_historical_monthly_votes(
-    self, id: int, period: Optional[Period]
+    self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical monthly votes of a ranked bot from its ID.
@@ -137,7 +137,7 @@ class Client:
     return await self.__get_historical_data('monthly_votes', id, period)
 
   async def get_bot_historical_total_votes(
-    self, id: int, period: Optional[Period]
+    self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical total votes of a ranked bot from its ID.
@@ -156,7 +156,7 @@ class Client:
     return await self.__get_historical_data('total_votes', id, period)
 
   async def get_bot_historical_server_count(
-    self, id: int, period: Optional[Period]
+    self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical server count of a ranked bot from its ID.
@@ -175,7 +175,7 @@ class Client:
     return await self.__get_historical_data('server_count', id, period)
 
   async def get_bot_historical_shard_count(
-    self, id: int, period: Optional[Period]
+    self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical shard count of a ranked bot from its ID.
