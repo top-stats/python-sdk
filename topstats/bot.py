@@ -190,7 +190,6 @@ class Bot:
     self.owners = [int(i) for i in (json.get('owners') or ())]
     self.is_deleted = json['deleted']
     self.name = json['name']
-    self.avatar = get_avatar(json.get('avatar'), self.id)
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
