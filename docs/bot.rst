@@ -5,24 +5,13 @@ Bot reference
    :members:
 
 .. autoclass:: topstats.bot.Ranked()
+   :inherited-members:
    :members:
 
 .. autoclass:: topstats.bot.Period()
    :members:
    :undoc-members:
 
-.. autoclass:: topstats.bot.MonthlyVotesHistoryEntry()
-   :inherited-members:
-   :members:
-
-.. autoclass:: topstats.bot.TotalVotesHistoryEntry()
-   :inherited-members:
-   :members:
-
-.. autoclass:: topstats.bot.ServerCountHistoryEntry()
-   :inherited-members:
-   :members:
-
-.. autoclass:: topstats.bot.ShardCountHistoryEntry()
+.. autoclass:: topstats.bot.HistoryEntry()
    :inherited-members:
    :members:

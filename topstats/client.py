@@ -23,27 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Optional, Union, Tuple, List, Type
+from typing import Optional, Tuple, List
 from aiohttp import ClientSession, ClientTimeout
 from asyncio import sleep
 
-from .bot import (
-  Bot,
-  Period,
-  MonthlyVotesHistoryEntry,
-  TotalVotesHistoryEntry,
-  ServerCountHistoryEntry,
-  ShardCountHistoryEntry,
-)
+from .bot import Bot, Period, HistoryEntry
 from .errors import Error, RequestError, Ratelimited
-
-
-type PossibleHistoryEntry = (
-  MonthlyVotesHistoryEntry
-  | TotalVotesHistoryEntry
-  | ServerCountHistoryEntry
-  | ShardCountHistoryEntry
-)
 
 
 class Client:
@@ -121,20 +106,20 @@ class Client:
     return b and Bot(b)
 
   async def __get_historical_data(
-    self, cls: Type[PossibleHistoryEntry], id: int, period: Period
-  ) -> Optional[List[PossibleHistoryEntry]]:
+    self, kind: str, id: int, period: Period
+  ) -> Optional[List[HistoryEntry]]:
     if not isinstance(period, Period):
       period = Period.ALL_TIME
 
     response = await self.__get(
-      f'/bots/{id}/historical?timeFrame={period.value}&type={cls.__slots__[0]}'
+      f'/bots/{id}/historical?timeFrame={period.value}&type={kind}'
     )
 
-    return [cls(data) for data in (response.get('data') or ())]
+    return [HistoryEntry(data, kind) for data in (response.get('data') or ())]
 
   async def get_bot_historical_monthly_votes(
     self, id: int, period: Optional[Period]
-  ) -> Optional[List[MonthlyVotesHistoryEntry]]:
+  ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical monthly votes of a ranked bot from its ID.
 
@@ -147,13 +132,13 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
 
     :returns: The requested list of historical monthly votes entries. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.MonthlyVotesHistoryEntry`]]
+    :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data(MonthlyVotesHistoryEntry, id, period)
+    return await self.__get_historical_data('monthly_votes', id, period)
 
   async def get_bot_historical_total_votes(
     self, id: int, period: Optional[Period]
-  ) -> Optional[List[TotalVotesHistoryEntry]]:
+  ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical total votes of a ranked bot from its ID.
 
@@ -166,13 +151,13 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
 
     :returns: The requested list of historical total votes entries. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.TotalVotesHistoryEntry`]]
+    :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data(TotalVotesHistoryEntry, id, period)
+    return await self.__get_historical_data('monthly_votes', id, period)
 
   async def get_bot_historical_server_count(
     self, id: int, period: Optional[Period]
-  ) -> Optional[List[ServerCountHistoryEntry]]:
+  ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical server count of a ranked bot from its ID.
 
@@ -185,13 +170,13 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
 
     :returns: The requested list of historical server count entries. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.ServerCountHistoryEntry`]]
+    :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data(ServerCountHistoryEntry, id, period)
+    return await self.__get_historical_data('server_count', id, period)
 
   async def get_bot_historical_shard_count(
     self, id: int, period: Optional[Period]
-  ) -> Optional[List[ShardCountHistoryEntry]]:
+  ) -> Optional[List[HistoryEntry]]:
     """
     Fetches historical shard count of a ranked bot from its ID.
 
@@ -204,9 +189,9 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
 
     :returns: The requested list of historical shard count entries. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.ShardCountHistoryEntry`]]
+    :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data(ShardCountHistoryEntry, id, period)
+    return await self.__get_historical_data('shard_count', id, period)
 
   async def close(self) -> None:
     """Closes the :class:`.Client` object. Nothing will happen if the client uses a pre-existing :class:`~aiohttp.ClientSession` or if the session is already closed."""

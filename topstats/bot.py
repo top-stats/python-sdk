@@ -30,41 +30,52 @@ from enum import Enum
 from .util import get_avatar
 
 
-class Ranked:
-  """Represents a ranked data point in topstats.gg. This class contains a value and its rank compared to others."""
-
-  __slots__ = ('value', 'rank')
+class DataPoint:
+  __slots__ = ('value',)
 
   value: int
   """This data point's value."""
+
+  def __init__(self, value: int):
+    self.value = value
+
+  def __int__(self) -> int:
+    return self.value
+
+  def __float__(self) -> float:
+    return float(self.value)
+
+  def __str__(self) -> str:
+    return str(self.value)
+
+  def __eq__(self, other: Union['DataPoint', float, int]) -> bool:
+    return self.value == int(other)
+
+  def __lt__(self, other: Union['DataPoint', float, int]) -> bool:
+    return self.value < int(other)
+
+  def __gt__(self, other: Union['DataPoint', float, int]) -> bool:
+    return self.value > int(other)
+
+  def __le__(self, other: Union['DataPoint', float, int]) -> bool:
+    return self.value <= int(other)
+
+  def __ge__(self, other: Union['DataPoint', float, int]) -> bool:
+    return self.value >= int(other)
+
+
+class Ranked(DataPoint):
+  """A ranked data point in topstats.gg. This class contains a value and its rank compared to others."""
+
+  __slots__ = ('rank',)
 
   rank: int
   """This data point's rank compared to others."""
 
   def __init__(self, json: dict, key: str):
-    self.value = json[key]
     self.rank = json[f'{key}_rank']
 
-  def __int__(self) -> int:
-    return self.value
-
-  def __str__(self) -> str:
-    return str(self.value)
-
-  def __eq__(self, other: Union['Ranked', int]) -> bool:
-    return self.value == int(other)
-
-  def __lt__(self, other: Union['Ranked', int]) -> bool:
-    return self.value < int(other)
-
-  def __gt__(self, other: Union['Ranked', int]) -> bool:
-    return self.value > int(other)
-
-  def __le__(self, other: Union['Ranked', int]) -> bool:
-    return self.value <= int(other)
-
-  def __ge__(self, other: Union['Ranked', int]) -> bool:
-    return self.value >= int(other)
+    super().__init__(json[key])
 
   def __repr__(self) -> str:
     return f'<{__class__.__name__}({self.value}, #{self.rank})>'
@@ -94,76 +105,27 @@ class Period(Enum):
     return self.name.replace('_', ' ').title()
 
 
-class HistoryEntry:
+class HistoryEntry(DataPoint):
+  """A historical data point entry in topstats.gg. This class contains a value and its dated timestamp."""
+
   __slots__: Tuple[str, ...] = ('timestamp',)
 
   timestamp: datetime
   """Timestamp of this history entry."""
 
-  def __init__(self, json: dict):
+  def __init__(self, json: dict, key: str):
     self.timestamp = datetime.strptime(
       json['time'], '%Y-%m-%dT%H:%M:%S.%fZ', tz=timezone.utc
     )
 
+    super().__init__(json[key])
 
-class MonthlyVotesHistoryEntry(HistoryEntry):
-  """A historical monthly votes entry."""
-
-  __slots__: Tuple[str, ...] = ('monthly_votes',)
-
-  monthly_votes: int
-  """The bot's monthly votes at this particular history entry."""
-
-  def __init__(self, json: dict):
-    self.monthly_votes = json['monthly_votes']
-
-    super().__init__(json)
-
-
-class TotalVotesHistoryEntry(HistoryEntry):
-  """A historical total votes entry."""
-
-  __slots__: Tuple[str, ...] = ('total_votes',)
-
-  total_votes: int
-  """The bot's total votes at this particular history entry."""
-
-  def __init__(self, json: dict):
-    self.total_votes = json['total_votes']
-
-    super().__init__(json)
-
-
-class ServerCountHistoryEntry(HistoryEntry):
-  """A historical server count entry."""
-
-  __slots__: Tuple[str, ...] = ('server_count',)
-
-  server_count: int
-  """The bot's server count at this particular history entry."""
-
-  def __init__(self, json: dict):
-    self.server_count = json['server_count']
-
-    super().__init__(json)
-
-
-class ShardCountHistoryEntry(HistoryEntry):
-  """A historical shard count entry."""
-
-  __slots__: Tuple[str, ...] = ('shard_count',)
-
-  shard_count: int
-  """The bot's shard count at this particular history entry."""
-
-  def __init__(self, json: dict):
-    self.shard_count = json['shard_count']
-
-    super().__init__(json)
+  def __repr__(self) -> str:
+    return f'<{__class__.__name__}({self.value} at {self.timestamp.strftime("%-d %B %Y %H:%M:%S")} UTC)>'
 
 
 class Bot:
-  """Represents a bot listed in topstats.gg."""
+  """A bot listed in topstats.gg."""
 
   __slots__: Tuple[str, ...] = (
     'id',

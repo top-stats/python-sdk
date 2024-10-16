@@ -27,7 +27,7 @@ from typing import Tuple, Optional
 
 
 class Error(Exception):
-  """Represents a topstats error class. Extends :py:class:`Exception`."""
+  """The base topstats.gg error class. Extends :py:class:`Exception`."""
 
   __slots__: Tuple[str, ...] = ()
 
