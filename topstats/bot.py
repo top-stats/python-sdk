@@ -74,7 +74,6 @@ class Bot:
 
   __slots__: Tuple[str, ...] = (
     'id',
-    'is_certified',
     'owners',
     'is_deleted',
     'name',
@@ -92,9 +91,6 @@ class Bot:
 
   id: int
   """The ID of this bot."""
-
-  is_certified: bool
-  """Whether this bot is Top.gg certified or not."""
 
   owners: List[int]
   """A list of IDs of this bot's owners."""
@@ -129,19 +125,18 @@ class Bot:
   total_votes: Ranked
   """The amount of upvotes this bot has regardless of timeframe including its rank compared to others."""
 
-  shard_count: int
-  """The amount of shards this bot has according to posted stats."""
+  shard_count: Ranked
+  """The amount of shards this bot has according to posted stats including its rank compared to others."""
 
   timestamp: datetime
   """TODO: document this???"""
 
   def __init__(self, json: dict):
     self.id = int(json['id'])
-    self.is_certified = json['certified']
-    self.owners = [int(i) for i in json['owners']]
+    self.owners = [int(i) for i in (json.get('owners') or ())]
     self.is_deleted = json['deleted']
     self.name = json['name']
-    self.avatar = get_avatar(json['avatar'], self.id)
+    self.avatar = get_avatar(json.get('avatar'), self.id)
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
@@ -151,7 +146,7 @@ class Bot:
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.server_count = Ranked(json, 'server_count')
     self.total_votes = Ranked(json, 'total_votes')
-    self.shard_count = json['shard_count']
+    self.shard_count = Ranked(json, 'shard_count')
     self.timestamp = datetime.fromtimestamp(
       int(json['unix_timestamp']) // 1000, tz=timezone.utc
     )
