@@ -24,7 +24,8 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import Tuple, Union, List
+from typing import Any, Tuple, Union, List
+from enum import Enum
 
 from .util import get_avatar
 
@@ -34,11 +35,11 @@ class Ranked:
 
   __slots__ = ('value', 'rank')
 
-  """This data point's value."""
   value: int
+  """This data point's value."""
 
-  """This data point's rank compared to others."""
   rank: int
+  """This data point's rank compared to others."""
 
   def __init__(self, json: dict, key: str):
     self.value = json[key]
@@ -69,6 +70,98 @@ class Ranked:
     return f'<{__class__.__name__}({self.value}, #{self.rank})>'
 
 
+class Period(Enum):
+  """The requested period for fetching historical bot graphs."""
+
+  __slots__: Tuple[str, ...] = ()
+
+  ALL_TIME = 'alltime'
+  LAST_5_YEARS = '5y'
+  LAST_3_YEARS = '3y'
+  LAST_YEAR = '1y'
+  LAST_90_DAYS = '90d'
+  LAST_30_DAYS = '30d'
+  LAST_WEEK = '7d'
+  LAST_3_DAYS = '3d'
+  LAST_DAY = '1d'
+  LAST_12_HOURS = '12h'
+  LAST_6_HOURS = '6h'
+
+  def __repr__(self) -> str:
+    return f'{__class__.__name__}.{self.name}'
+
+  def __str__(self) -> str:
+    return self.name.replace('_', ' ').title()
+
+
+class HistoryEntry:
+  __slots__: Tuple[str, ...] = ('timestamp',)
+
+  timestamp: datetime
+  """Timestamp of this history entry."""
+
+  def __init__(self, json: dict):
+    self.timestamp = datetime.strptime(
+      json['time'], '%Y-%m-%dT%H:%M:%S.%fZ', tz=timezone.utc
+    )
+
+
+class MonthlyVotesHistoryEntry(HistoryEntry):
+  """A historical monthly votes entry."""
+
+  __slots__: Tuple[str, ...] = ('monthly_votes',)
+
+  monthly_votes: int
+  """The bot's monthly votes at this particular history entry."""
+
+  def __init__(self, json: dict):
+    self.monthly_votes = json['monthly_votes']
+
+    super().__init__(json)
+
+
+class TotalVotesHistoryEntry(HistoryEntry):
+  """A historical total votes entry."""
+
+  __slots__: Tuple[str, ...] = ('total_votes',)
+
+  total_votes: int
+  """The bot's total votes at this particular history entry."""
+
+  def __init__(self, json: dict):
+    self.total_votes = json['total_votes']
+
+    super().__init__(json)
+
+
+class ServerCountHistoryEntry(HistoryEntry):
+  """A historical server count entry."""
+
+  __slots__: Tuple[str, ...] = ('server_count',)
+
+  server_count: int
+  """The bot's server count at this particular history entry."""
+
+  def __init__(self, json: dict):
+    self.server_count = json['server_count']
+
+    super().__init__(json)
+
+
+class ShardCountHistoryEntry(HistoryEntry):
+  """A historical shard count entry."""
+
+  __slots__: Tuple[str, ...] = ('shard_count',)
+
+  shard_count: int
+  """The bot's shard count at this particular history entry."""
+
+  def __init__(self, json: dict):
+    self.shard_count = json['shard_count']
+
+    super().__init__(json)
+
+
 class Bot:
   """Represents a bot listed in topstats.gg."""
 
@@ -87,6 +180,7 @@ class Bot:
     'total_votes',
     'shard_count',
     'timestamp',
+    'updated_at',
   )
 
   id: int
@@ -141,7 +235,7 @@ class Bot:
     self.prefix = json['prefix']
     self.website = json['website']
     self.approved_at = datetime.strptime(
-      json['approved_at'], '%Y-%m-%dT%H:%M:%S.%fZ'
+      json['approved_at'], '%Y-%m-%dT%H:%M:%S.%fZ', tz=timezone.utc
     )
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.server_count = Ranked(json, 'server_count')

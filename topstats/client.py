@@ -23,13 +23,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import Optional, Union, Tuple, List, Type
 from aiohttp import ClientSession, ClientTimeout
-from typing import Optional, Union, Tuple
 from asyncio import sleep
-from io import BytesIO
 
-from .bot import Bot
+from .bot import (
+  Bot,
+  Period,
+  MonthlyVotesHistoryEntry,
+  TotalVotesHistoryEntry,
+  ServerCountHistoryEntry,
+  ShardCountHistoryEntry,
+)
 from .errors import Error, RequestError, Ratelimited
+
+
+type PossibleHistoryEntry = (
+  MonthlyVotesHistoryEntry
+  | TotalVotesHistoryEntry
+  | ServerCountHistoryEntry
+  | ShardCountHistoryEntry
+)
 
 
 class Client:
@@ -57,9 +71,7 @@ class Client:
   def __repr__(self) -> str:
     return f'<{__class__.__name__} {self.__session!r}>'
 
-  async def __get(
-    self, path: str, fetch_bytes: bool = False
-  ) -> Optional[Union[BytesIO, dict]]:
+  async def __get(self, path: str) -> Optional[dict]:
     delay = 0.5
 
     while True:
@@ -69,17 +81,13 @@ class Client:
         async with self.__session.get(
           f'https://api.topstats.gg{path}', headers={'Authorization': self.__token}
         ) as resp:
-          if not fetch_bytes:
-            try:
-              json = await resp.json()
-            except:
-              pass
+          try:
+            json = await resp.json()
+          except:
+            pass
 
           json['message'] = json.get('message', resp.reason)
           resp.raise_for_status()
-
-          if fetch_bytes:
-            return BytesIO(await resp.read())
 
           return json
       except Exception:
@@ -99,7 +107,7 @@ class Client:
     """
     Fetches a ranked bot from its ID.
 
-    :param id: The requested ranked bot's ID. This can be :py:obj:`None`.
+    :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
@@ -111,6 +119,102 @@ class Client:
 
     b = await self.__get(f'/bots/{id}')
     return b and Bot(b)
+
+  async def __get_historical_data(
+    self, kind: str, cls: Type[PossibleHistoryEntry], id: int, period: Period
+  ) -> Optional[List[PossibleHistoryEntry]]:
+    if not isinstance(period, Period):
+      period = Period.ALL_TIME
+
+    response = await self.__get(
+      f'/api/bots/{id}/historical?timeFrame={period.value}&type={kind}'
+    )
+
+    return [cls(data) for data in (response.get('data') or ())]
+
+  async def get_bot_historical_monthly_votes(
+    self, id: int, period: Optional[Period]
+  ) -> Optional[List[MonthlyVotesHistoryEntry]]:
+    """
+    Fetches historical monthly votes of a ranked bot from its ID.
+
+    :param id: The requested ranked bot's ID.
+    :type id: :py:class:`int`
+    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :type period: Optional[:class:`.Period`]
+
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+
+    :returns: The requested list of historical monthly votes entries. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[List[:class:`.MonthlyVotesHistoryEntry`]]
+    """
+    return await self.__get_historical_data(
+      'monthly_votes', MonthlyVotesHistoryEntry, id, period
+    )
+
+  async def get_bot_historical_total_votes(
+    self, id: int, period: Optional[Period]
+  ) -> Optional[List[TotalVotesHistoryEntry]]:
+    """
+    Fetches historical total votes of a ranked bot from its ID.
+
+    :param id: The requested ranked bot's ID.
+    :type id: :py:class:`int`
+    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :type period: Optional[:class:`.Period`]
+
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+
+    :returns: The requested list of historical total votes entries. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[List[:class:`.TotalVotesHistoryEntry`]]
+    """
+    return await self.__get_historical_data(
+      'total_votes', TotalVotesHistoryEntry, id, period
+    )
+
+  async def get_bot_historical_server_count(
+    self, id: int, period: Optional[Period]
+  ) -> Optional[List[ServerCountHistoryEntry]]:
+    """
+    Fetches historical server count of a ranked bot from its ID.
+
+    :param id: The requested ranked bot's ID.
+    :type id: :py:class:`int`
+    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :type period: Optional[:class:`.Period`]
+
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+
+    :returns: The requested list of historical server count entries. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[List[:class:`.ServerCountHistoryEntry`]]
+    """
+    return await self.__get_historical_data(
+      'server_count', ServerCountHistoryEntry, id, period
+    )
+
+  async def get_bot_historical_shard_count(
+    self, id: int, period: Optional[Period]
+  ) -> Optional[List[ShardCountHistoryEntry]]:
+    """
+    Fetches historical shard count of a ranked bot from its ID.
+
+    :param id: The requested ranked bot's ID.
+    :type id: :py:class:`int`
+    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :type period: Optional[:class:`.Period`]
+
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+
+    :returns: The requested list of historical shard count entries. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[List[:class:`.ShardCountHistoryEntry`]]
+    """
+    return await self.__get_historical_data(
+      'shard_count', ShardCountHistoryEntry, id, period
+    )
 
   async def close(self) -> None:
     """Closes the :class:`.Client` object. Nothing will happen if the client uses a pre-existing :class:`~aiohttp.ClientSession` or if the session is already closed."""
