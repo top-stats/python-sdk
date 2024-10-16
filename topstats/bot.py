@@ -128,8 +128,8 @@ class Bot:
   shard_count: Ranked
   """The amount of shards this bot has according to posted stats including its rank compared to others."""
 
-  timestamp: datetime
-  """TODO: document this???"""
+  updated_at: datetime
+  """The date when this bot was last updated by topstats.gg."""
 
   def __init__(self, json: dict):
     self.id = int(json['id'])
@@ -147,7 +147,7 @@ class Bot:
     self.server_count = Ranked(json, 'server_count')
     self.total_votes = Ranked(json, 'total_votes')
     self.shard_count = Ranked(json, 'shard_count')
-    self.timestamp = datetime.fromtimestamp(
+    self.updated_at = datetime.fromtimestamp(
       int(json['unix_timestamp']) // 1000, tz=timezone.utc
     )
 
