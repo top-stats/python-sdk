@@ -112,9 +112,7 @@ class HistoryEntry(DataPoint):
   """Timestamp of this history entry."""
 
   def __init__(self, json: dict, key: str):
-    self.timestamp = datetime.strptime(
-      json['time'], '%Y-%m-%dT%H:%M:%S.%fZ', tz=timezone.utc
-    )
+    self.timestamp = datetime.strptime(json['time'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
     super().__init__(json[key])
 
@@ -193,9 +191,7 @@ class Bot:
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
-    self.approved_at = datetime.strptime(
-      json['approved_at'], '%Y-%m-%dT%H:%M:%S.%fZ', tz=timezone.utc
-    )
+    self.approved_at = datetime.strptime(json['approved_at'], '%Y-%m-%dT%H:%M:%S.%fZ')
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.server_count = Ranked(json, 'server_count')
     self.total_votes = Ranked(json, 'total_votes')
