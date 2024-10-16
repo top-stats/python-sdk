@@ -40,13 +40,13 @@ class Client:
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: Optional[:class:`~aiohttp.ClientSession`]
 
-  :raises Error: If ``token`` is :py:obj:`None`.
+  :raises Error: If ``token`` is not a :py:class:`str`.
   """
 
   __slots__: Tuple[str, ...] = ('__own_session', '__session', '__token')
 
   def __init__(self, token: str, *, session: Optional[ClientSession] = None):
-    if not token:
+    if not isinstance(token, str):
       raise Error('An API token is required to use this API.')
 
     self.__own_session = session is None

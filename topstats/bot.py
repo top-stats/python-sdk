@@ -27,8 +27,6 @@ from datetime import datetime, timezone
 from typing import Any, Tuple, Union, List
 from enum import Enum
 
-from .util import get_avatar
-
 
 class DataPoint:
   __slots__ = ('value',)
@@ -49,19 +47,19 @@ class DataPoint:
     return str(self.value)
 
   def __eq__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value == int(other)
+    return self.value == float(other)
 
   def __lt__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value < int(other)
+    return self.value < float(other)
 
   def __gt__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value > int(other)
+    return self.value > float(other)
 
   def __le__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value <= int(other)
+    return self.value <= float(other)
 
   def __ge__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value >= int(other)
+    return self.value >= float(other)
 
 
 class Ranked(DataPoint):
@@ -206,6 +204,17 @@ class Bot:
     self.updated_at = datetime.fromtimestamp(
       int(json['unix_timestamp']) // 1000, tz=timezone.utc
     )
+
+    if avatar := json.get('avatar'):
+      ext = 'gif' if avatar.startswith('a_') else 'png'
+
+      self.avatar = (
+        f'https://cdn.discordapp.com/avatars/{self.id}/{avatar}.{ext}?size=1024'
+      )
+    else:
+      self.avatar = (
+        f'https://cdn.discordapp.com/embed/avatars/{(self.id >> 22) % 6}.png'
+      )
 
   def __int__(self) -> int:
     return self.id
