@@ -125,7 +125,7 @@ class Client:
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
-    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
@@ -144,7 +144,7 @@ class Client:
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
-    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
@@ -163,7 +163,7 @@ class Client:
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
-    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
@@ -182,7 +182,7 @@ class Client:
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
-    :param period: The requested period. Defaults to :attr:`.Period.ALL_TIME`.
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.

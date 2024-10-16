@@ -80,7 +80,7 @@ class Ranked(DataPoint):
 
 
 class Period(Enum):
-  """The requested period for fetching historical bot graphs."""
+  """The requested time period for fetching historical bot graphs."""
 
   __slots__: Tuple[str, ...] = ()
 
