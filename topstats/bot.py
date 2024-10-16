@@ -29,7 +29,7 @@ from enum import Enum
 
 
 class DataPoint:
-  __slots__ = ('value',)
+  __slots__: Tuple[str, ...] = ('value',)
 
   value: int
   """This data point's value."""
@@ -65,7 +65,7 @@ class DataPoint:
 class Ranked(DataPoint):
   """A ranked data point in topstats.gg. This class contains a value and its rank compared to others."""
 
-  __slots__ = ('rank',)
+  __slots__: Tuple[str, ...] = ('rank',)
 
   rank: int
   """This data point's rank compared to others."""
