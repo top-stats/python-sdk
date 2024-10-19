@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .bot import Bot, Period, HistoryEntry
+from .bot import Bot, Period, HistoricalEntry, RecentGraph
 from .client import Client
 from .errors import Error, RequestError, Ratelimited
 
@@ -36,8 +36,9 @@ __all__ = (
   'Bot',
   'Client',
   'Error',
-  'HistoryEntry',
+  'HistoricalEntry',
   'Period',
   'RequestError',
   'Ratelimited',
+  'RecentGraph',
 )

@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import Any, Tuple, Union, List
+from typing import Tuple, Union, List
 from enum import Enum
 
 
@@ -76,7 +76,24 @@ class Ranked(DataPoint):
     super().__init__(json[key])
 
   def __repr__(self) -> str:
-    return f'<{__class__.__name__}({self.value}, #{self.rank})>'
+    return f'<{__class__.__name__} value={self.value!r} rank={self.rank!r}>'
+
+
+class Changed(DataPoint):
+  """A changed data point in topstats.gg. This class contains a value and its change difference compared to the previous data point."""
+
+  __slots__: Tuple[str, ...] = ('difference',)
+
+  difference: int
+  """This data point's change difference compared to the previous data point."""
+
+  def __init__(self, json: dict, key: str):
+    self.difference = json[f'{key}_change']
+
+    super().__init__(json[key])
+
+  def __repr__(self) -> str:
+    return f'<{__class__.__name__} value={self.value!r} difference={self.difference!r}>'
 
 
 class Period(Enum):
@@ -103,7 +120,7 @@ class Period(Enum):
     return self.name.replace('_', ' ').title()
 
 
-class HistoryEntry(DataPoint):
+class HistoricalEntry(DataPoint):
   """A historical data point entry in topstats.gg. This class contains a value and its dated timestamp."""
 
   __slots__: Tuple[str, ...] = ('timestamp',)
@@ -117,7 +134,66 @@ class HistoryEntry(DataPoint):
     super().__init__(json[key])
 
   def __repr__(self) -> str:
-    return f'<{__class__.__name__}({self.value} at {self.timestamp!r})>'
+    return f'<{__class__.__name__} value={self.value!r} timestamp={self.timestamp!r}>'
+
+
+class RecentEntry:
+  """A recent data point entry in topstats.gg. This class contains several data points and a dated timestamp."""
+
+  __slots__: Tuple[str, ...] = (
+    'timestamp',
+    'monthly_votes',
+    'total_votes',
+    'server_count',
+    'shard_count',
+  )
+
+  timestamp: datetime
+  """Timestamp of this recent entry."""
+
+  monthly_votes: Changed
+  """Monthly votes at this timestamp alongside its change difference compared to the previous one."""
+
+  total_votes: Changed
+  """Total votes at this timestamp alongside its change difference compared to the previous one."""
+
+  server_count: Changed
+  """Server count at this timestamp alongside its change difference compared to the previous one."""
+
+  shard_count: Changed
+  """Shard count at this timestamp alongside its change difference compared to the previous one."""
+
+  def __init__(self, json: dict):
+    self.timestamp = datetime.strptime(json['time'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    self.monthly_votes = Changed(json, 'monthly_votes')
+    self.total_votes = Changed(json, 'total_votes')
+    self.server_count = Changed(json, 'server_count')
+    self.shard_count = Changed(json, 'shard_count')
+
+  def __repr__(self) -> str:
+    return f'<{__class__.__name__} monthly_votes={self.monthly_votes!r} total_votes={self.total_votes!r} server_count={self.server_count!r} shard_count={self.shard_count!r} timestamp={self.timestamp!r}>'
+
+
+class RecentGraph:
+  """Recent graph of for the past 30 hours and past month."""
+
+  __slots__: Tuple[str, ...] = (
+    'hourly',
+    'daily',
+  )
+
+  hourly: List[RecentEntry]
+  """List of recent data entries for the past 30 hours."""
+
+  daily: List[RecentEntry]
+  """List of recent data entries for the past month."""
+
+  def __init__(self, json: dict):
+    self.hourly = [RecentEntry(entry) for entry in json['hourlyData']]
+    self.daily = [RecentEntry(entry) for entry in json['dailyData']]
+
+  def __repr__(self) -> str:
+    return f'<{__class__.__name__} hourly={self.hourly!r} daily={self.daily!r}>'
 
 
 class Bot:
