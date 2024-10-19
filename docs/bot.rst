@@ -13,11 +13,9 @@ Bot reference
    :members:
 
 .. autoclass:: topstats.bot.RecentGraph()
-   :inherited-members:
    :members:
 
 .. autoclass:: topstats.bot.RecentEntry()
-   :inherited-members:
    :members:
 
 .. autoclass:: topstats.bot.Ranked()
