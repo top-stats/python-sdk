@@ -129,7 +129,7 @@ class HistoricalEntry(DataPoint):
   """Timestamp of this history entry."""
 
   def __init__(self, json: dict, key: str):
-    self.timestamp = datetime.strptime(json['time'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    self.timestamp = datetime.fromisoformat(json['time'])
 
     super().__init__(json[key])
 
@@ -164,7 +164,7 @@ class RecentEntry:
   """Shard count at this timestamp alongside its change difference compared to the previous one."""
 
   def __init__(self, json: dict):
-    self.timestamp = datetime.strptime(json['time'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    self.timestamp = datetime.fromisoformat(json['time'])
     self.monthly_votes = Changed(json, 'monthly_votes')
     self.total_votes = Changed(json, 'total_votes')
     self.server_count = Changed(json, 'server_count')
