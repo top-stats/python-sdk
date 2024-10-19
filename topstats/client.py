@@ -105,7 +105,7 @@ class Client:
     b = await self.__get(f'/bots/{id}')
     return b and Bot(b)
 
-  async def __get_historical_data(
+  async def __get_bot_graph(
     self, kind: str, id: int, period: Period
   ) -> Optional[List[HistoryEntry]]:
     if not isinstance(period, Period):
@@ -117,11 +117,11 @@ class Client:
 
     return [HistoryEntry(data, kind) for data in (response.get('data') or ())]
 
-  async def get_bot_historical_monthly_votes(
+  async def get_bot_monthly_votes_graph(
     self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
-    Fetches historical monthly votes of a ranked bot from its ID.
+    Fetches monthly votes graph of a ranked bot from its ID.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -134,13 +134,13 @@ class Client:
     :returns: The requested list of historical monthly votes entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data('monthly_votes', id, period)
+    return await self.__get_bot_graph('monthly_votes', id, period)
 
-  async def get_bot_historical_total_votes(
+  async def get_bot_total_votes_graph(
     self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
-    Fetches historical total votes of a ranked bot from its ID.
+    Fetches total votes graph of a ranked bot from its ID.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -153,13 +153,13 @@ class Client:
     :returns: The requested list of historical total votes entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data('total_votes', id, period)
+    return await self.__get_bot_graph('total_votes', id, period)
 
-  async def get_bot_historical_server_count(
+  async def get_bot_server_count_graph(
     self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
-    Fetches historical server count of a ranked bot from its ID.
+    Fetches server count graph of a ranked bot from its ID.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -172,13 +172,13 @@ class Client:
     :returns: The requested list of historical server count entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data('server_count', id, period)
+    return await self.__get_bot_graph('server_count', id, period)
 
-  async def get_bot_historical_shard_count(
+  async def get_bot_shard_count_graph(
     self, id: int, period: Optional[Period] = None
   ) -> Optional[List[HistoryEntry]]:
     """
-    Fetches historical shard count of a ranked bot from its ID.
+    Fetches shard count graph of a ranked bot from its ID.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -191,7 +191,7 @@ class Client:
     :returns: The requested list of historical shard count entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoryEntry`]]
     """
-    return await self.__get_historical_data('shard_count', id, period)
+    return await self.__get_bot_graph('shard_count', id, period)
 
   async def close(self) -> None:
     """Closes the :class:`.Client` object. Nothing will happen if the client uses a pre-existing :class:`~aiohttp.ClientSession` or if the session is already closed."""

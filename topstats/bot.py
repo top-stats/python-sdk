@@ -89,7 +89,7 @@ class Period(Enum):
   LAST_3_YEARS = '3y'
   LAST_YEAR = '1y'
   LAST_90_DAYS = '90d'
-  LAST_30_DAYS = '30d'
+  LAST_MONTH = '30d'
   LAST_WEEK = '7d'
   LAST_3_DAYS = '3d'
   LAST_DAY = '1d'
@@ -232,7 +232,7 @@ class Bot:
 
   @property
   def created_at(self) -> datetime:
-    """The bot's creation time in UTC."""
+    """The date when this bot was created."""
 
     return datetime.fromtimestamp(
       ((self.id >> 22) + 1420070400000) // 1000, tz=timezone.utc
