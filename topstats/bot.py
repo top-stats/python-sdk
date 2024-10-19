@@ -198,12 +198,12 @@ class Bot:
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
-    self.approved_at = datetime.strptime(json['approved_at'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    self.approved_at = datetime.fromisoformat(json['approved_at'])
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.server_count = Ranked(json, 'server_count')
     self.total_votes = Ranked(json, 'total_votes')
     self.shard_count = Ranked(json, 'shard_count')
-    self.timestamp = datetime.strptime(json['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    self.timestamp = datetime.fromisoformat(json['timestamp'])
     self.daily_difference = float(json['percentageChanges']['daily'])
     self.monthly_difference = float(json['percentageChanges']['monthly'])
 
