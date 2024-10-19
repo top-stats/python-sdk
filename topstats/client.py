@@ -115,7 +115,7 @@ class Client:
       f'/bots/{id}/historical?timeFrame={period.value}&type={kind}'
     )
 
-    return [HistoricalEntry(data, kind) for data in (response.get('data') or ())]
+    return [HistoricalEntry(data, kind) for data in response['data']]
 
   async def get_historical_monthly_votes_graph(
     self, id: int, period: Optional[Period] = None
