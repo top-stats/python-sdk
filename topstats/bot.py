@@ -222,7 +222,7 @@ class Bot:
   """The ID of this bot."""
 
   owners: List[int]
-  """A list of IDs of this bot's owners."""
+  """A list of this bot's owner IDs."""
 
   is_deleted: bool
   """Whether this bot is deleted or not."""
