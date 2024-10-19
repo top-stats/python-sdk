@@ -15,5 +15,6 @@ topstats_
 
    client
    bot
+   support-server
    repository
    raw-api-reference
