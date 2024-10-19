@@ -96,7 +96,7 @@ class Client:
     :type id: :py:class:`int`
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested ranked bot. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[:class:`.Bot`]
@@ -129,7 +129,7 @@ class Client:
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a certain period of time.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a certain period of time.
 
     :returns: The requested list of historical monthly votes entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoricalEntry`]]
@@ -149,7 +149,7 @@ class Client:
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of historical total votes entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoricalEntry`]]
@@ -169,7 +169,7 @@ class Client:
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of historical server count entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoricalEntry`]]
@@ -189,7 +189,7 @@ class Client:
     :type period: Optional[:class:`.Period`]
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of historical shard count entries. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[List[:class:`.HistoricalEntry`]]
@@ -205,7 +205,7 @@ class Client:
     :type id: :py:class:`int`
 
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` cannot send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and not allowed to make requests for a period of time.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested recent graph for the past 30 hours and past month. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[:class:`.RecentGraph`]

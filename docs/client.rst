@@ -3,7 +3,6 @@ Client reference
 
 .. autoclass:: topstats.client.Client
    :members:
-   :inherited-members:
 
 .. autoclass:: topstats.errors.Error()
 
@@ -11,4 +10,5 @@ Client reference
    :members:
 
 .. autoclass:: topstats.errors.Ratelimited()
+   :inherited-members:
    :members:
