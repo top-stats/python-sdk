@@ -138,7 +138,8 @@ class Bot:
     'total_votes',
     'shard_count',
     'timestamp',
-    'updated_at',
+    'daily_difference',
+    'monthly_difference',
   )
 
   id: int
@@ -180,8 +181,14 @@ class Bot:
   shard_count: Ranked
   """The amount of shards this bot has according to posted stats including its rank compared to others."""
 
-  updated_at: datetime
+  timestamp: datetime
   """The date when this bot was last updated by topstats.gg."""
+
+  daily_difference: float
+  """Difference percentage from the previous day."""
+
+  monthly_difference: float
+  """Difference percentage from the previous month."""
 
   def __init__(self, json: dict):
     self.id = int(json['id'])
@@ -196,9 +203,9 @@ class Bot:
     self.server_count = Ranked(json, 'server_count')
     self.total_votes = Ranked(json, 'total_votes')
     self.shard_count = Ranked(json, 'shard_count')
-    self.updated_at = datetime.fromtimestamp(
-      int(json['unix_timestamp']) // 1000, tz=timezone.utc
-    )
+    self.timestamp = datetime.strptime(json['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    self.daily_difference = float(json['percentageChanges']['daily'])
+    self.monthly_difference = float(json['percentageChanges']['monthly'])
 
     if avatar := json.get('avatar'):
       ext = 'gif' if avatar.startswith('a_') else 'png'
