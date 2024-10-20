@@ -72,11 +72,12 @@ class Client:
             pass
 
           json['message'] = json.get('message', resp.reason)
+          json['statusCode'] = json.get('statusCode', resp.status)
           resp.raise_for_status()
 
           return json
       except Exception:
-        code = json.get('code')
+        code = json.get('statusCode')
 
         if code == 404:
           return None
