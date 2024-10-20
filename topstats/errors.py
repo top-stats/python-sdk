@@ -55,6 +55,6 @@ class Ratelimited(RequestError):
   """How long you should wait until you can make a request to this endpoint again."""
 
   def __init__(self, json: dict):
-    self.retry_after = int(json['retry_after'])
+    self.retry_after = int(json['expiresIn'])
 
     super().__init__(json)
