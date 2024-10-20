@@ -279,7 +279,7 @@ class Bot:
     self.server_count = Ranked(json, 'server_count')
     self.total_votes = Ranked(json, 'total_votes')
     self.shard_count = Ranked(json, 'shard_count')
-    self.timestamp = datetime.fromisoformat(json['timestamp'])
+    self.timestamp = datetime.fromtimestamp(json['unix_timestamp'], tz=timezone.utc)
     self.daily_difference = float(json['percentageChanges']['daily'])
     self.monthly_difference = float(json['percentageChanges']['monthly'])
 
