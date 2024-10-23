@@ -45,6 +45,9 @@ class RequestError(Error):
 
     super().__init__()
 
+  def __repr__(self) -> str:
+    return f'<{__class__.__name__} message={self.message!r}>'
+
 
 class Ratelimited(RequestError):
   """Thrown upon HTTP request failure due to being ratelimited and is not allowed to make requests for a period of time. Extends :class:`.RequestError`."""
@@ -58,3 +61,6 @@ class Ratelimited(RequestError):
     self.retry_after = int(json['expiresIn'])
 
     super().__init__(json)
+
+  def __repr__(self) -> str:
+    return f'<{__class__.__name__} retry_after={self.retry_after} message={self.message!r}>'

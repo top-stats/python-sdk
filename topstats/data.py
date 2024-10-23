@@ -127,74 +127,65 @@ class Period(Enum):
 class SortBy:
   """The requested sorting method for sorting ranked bots in topstats.gg."""
 
-  __slots__: Tuple[str, ...] = ('__query',)
+  __slots__: Tuple[str, ...] = ('q',)
 
   def __init__(
     self,
     sort_by: str,
-    ascending: Optional[bool] = None,
-    descending: Optional[bool] = None,
+    ascending: bool,
   ):
-    self.__query = (
-      f'sortBy={sort_by}&sortMethod={"desc" if descending or not ascending else "asc"}'
+    self.q = (
+      f'sortBy={sort_by}_rank&sortMethod={"a" if ascending else "de"}sc'
     )
 
   @staticmethod
   def monthly_votes(
-    *, ascending: Optional[bool] = None, descending: Optional[bool] = None
+    *, ascending: bool = False
   ) -> 'SortBy':
     """
     Sorts ranked bots by their monthly votes.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: Optional[:py:class:`bool`]
-    :param descending: Whether to sort by descending or not. Defaults to sort by descending.
-    :type descending: Optional[:py:class:`bool`]
+    :type ascending: :py:class`bool`
     """
 
-    return SortBy('monthly_votes', ascending, descending)
+    return SortBy('monthly_votes', ascending)
 
   @staticmethod
   def total_votes(
-    *, ascending: Optional[bool] = None, descending: Optional[bool] = None
+    *, ascending: bool = False
   ) -> 'SortBy':
     """
     Sorts ranked bots by their total votes.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: Optional[:py:class:`bool`]
-    :param descending: Whether to sort by descending or not. Defaults to sort by descending.
-    :type descending: Optional[:py:class:`bool`]
+    :type ascending: :py:class`bool`
     """
 
-    return SortBy('total_votes', ascending, descending)
+    return SortBy('total_votes', ascending)
 
   @staticmethod
   def server_count(
-    *, ascending: Optional[bool] = None, descending: Optional[bool] = None
+    *, ascending: bool = False
   ) -> 'SortBy':
     """
     Sorts ranked bots by their server count.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: Optional[:py:class:`bool`]
-    :param descending: Whether to sort by descending or not. Defaults to sort by descending.
-    :type descending: Optional[:py:class:`bool`]
+    :type ascending: :py:class`bool`
     """
 
-    return SortBy('server_count', ascending, descending)
+    return SortBy('server_count', ascending)
 
   @staticmethod
   def shard_count(
-    *, ascending: Optional[bool] = None, descending: Optional[bool] = None
+    *, ascending: bool = False
   ) -> 'SortBy':
     """
     Sorts ranked bots by their shard count.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: Optional[:py:class:`bool`]
-    :param descending: Whether to sort by descending or not. Defaults to sort by descending.
-    :type descending: Optional[:py:class:`bool`]
+    :type ascending: :py:class`bool`
     """
 
-    return SortBy('shard_count', ascending, descending)
+    return SortBy('shard_count', ascending)
