@@ -23,8 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .bot import Bot, Period, HistoricalEntry, RecentGraph
+from .bot import (
+  Bot,
+  PartialBot,
+  Ranked,
+  RecentBotStats,
+  TimestampedBotStats,
+)
 from .client import Client
+from .data import Period, SortBy, Timestamped
 from .errors import Error, RequestError, Ratelimited
 
 __title__ = 'topstats'
@@ -36,9 +43,13 @@ __all__ = (
   'Bot',
   'Client',
   'Error',
-  'HistoricalEntry',
+  'PartialBot',
   'Period',
   'RequestError',
+  'Ranked',
   'Ratelimited',
-  'RecentGraph',
+  'RecentBotStats',
+  'SortBy',
+  'Timestamped',
+  'TimestampedBotStats',
 )
