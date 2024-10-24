@@ -146,7 +146,7 @@ class SortBy:
     Sorts ranked bots by their monthly votes.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: :py:class`bool`
+    :type ascending: :py:class:`bool`
     """
 
     return SortBy('monthly_votes', ascending)
@@ -159,7 +159,7 @@ class SortBy:
     Sorts ranked bots by their total votes.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: :py:class`bool`
+    :type ascending: :py:class:`bool`
     """
 
     return SortBy('total_votes', ascending)
@@ -172,7 +172,7 @@ class SortBy:
     Sorts ranked bots by their server count.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: :py:class`bool`
+    :type ascending: :py:class:`bool`
     """
 
     return SortBy('server_count', ascending)
@@ -185,7 +185,7 @@ class SortBy:
     Sorts ranked bots by their shard count.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: :py:class`bool`
+    :type ascending: :py:class:`bool`
     """
 
     return SortBy('shard_count', ascending)
