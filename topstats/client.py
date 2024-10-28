@@ -65,7 +65,12 @@ class Client:
 
       try:
         async with self.__session.get(
-          f'https://api.topstats.gg{path}', headers={'Authorization': self.__token}
+          f'https://api.topstats.gg{path}',
+          headers={
+            'Authorization': self.__token,
+            'Content-Type': 'application/json',
+            'User-Agent': 'topstats (https://github.com/top-stats/dblstats.py 1.0.0) Python/',
+          },
         ) as resp:
           try:
             json = await resp.json()

@@ -134,14 +134,10 @@ class SortBy:
     sort_by: str,
     ascending: bool,
   ):
-    self.q = (
-      f'sortBy={sort_by}_rank&sortMethod={"a" if ascending else "de"}sc'
-    )
+    self.q = f'sortBy={sort_by}_rank&sortMethod={"a" if ascending else "de"}sc'
 
   @staticmethod
-  def monthly_votes(
-    *, ascending: bool = False
-  ) -> 'SortBy':
+  def monthly_votes(*, ascending: bool = False) -> 'SortBy':
     """
     Sorts ranked bots by their monthly votes.
 
@@ -152,9 +148,7 @@ class SortBy:
     return SortBy('monthly_votes', ascending)
 
   @staticmethod
-  def total_votes(
-    *, ascending: bool = False
-  ) -> 'SortBy':
+  def total_votes(*, ascending: bool = False) -> 'SortBy':
     """
     Sorts ranked bots by their total votes.
 
@@ -165,9 +159,7 @@ class SortBy:
     return SortBy('total_votes', ascending)
 
   @staticmethod
-  def server_count(
-    *, ascending: bool = False
-  ) -> 'SortBy':
+  def server_count(*, ascending: bool = False) -> 'SortBy':
     """
     Sorts ranked bots by their server count.
 
@@ -178,9 +170,7 @@ class SortBy:
     return SortBy('server_count', ascending)
 
   @staticmethod
-  def shard_count(
-    *, ascending: bool = False
-  ) -> 'SortBy':
+  def shard_count(*, ascending: bool = False) -> 'SortBy':
     """
     Sorts ranked bots by their shard count.
 

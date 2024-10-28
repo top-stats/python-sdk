@@ -63,4 +63,6 @@ class Ratelimited(RequestError):
     super().__init__(json)
 
   def __repr__(self) -> str:
-    return f'<{__class__.__name__} retry_after={self.retry_after} message={self.message!r}>'
+    return (
+      f'<{__class__.__name__} retry_after={self.retry_after} message={self.message!r}>'
+    )
