@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from typing import List, Optional, Tuple, Union
 from datetime import datetime, timezone
-from typing import Tuple, Union, List
 
 from .data import Ranked
 
@@ -177,11 +177,11 @@ class Bot(PartialBot):
   timestamp: datetime
   """The date when this bot was last updated by topstats.gg."""
 
-  daily_difference: float
-  """Difference percentage from the previous day."""
+  daily_difference: Optional[float]
+  """Difference percentage from the previous day. This can be :py:obj:`None`."""
 
-  monthly_difference: float
-  """Difference percentage from the previous month."""
+  monthly_difference: Optional[float]
+  """Difference percentage from the previous month. This can be :py:obj:`None`."""
 
   def __init__(self, json: dict):
     self.owners = [int(i) for i in (json.get('owners') or ())]
@@ -190,19 +190,31 @@ class Bot(PartialBot):
     self.prefix = json['prefix']
     self.website = json['website']
     self.approved_at = datetime.fromisoformat(json['approved_at'])
-    self.timestamp = datetime.fromtimestamp(json['unix_timestamp'], tz=timezone.utc)
-    self.daily_difference = float(json['percentageChanges']['daily'])
-    self.monthly_difference = float(json['percentageChanges']['monthly'])
+    self.timestamp = datetime.fromtimestamp(
+      int(json['unix_timestamp']) // 1000, tz=timezone.utc
+    )
+
+    if percentage_changes := json.get('percentageChanges'):
+      daily = percentage_changes.get('daily')
+      monthly = percentage_changes.get('monthly')
+
+      self.daily_difference = daily and float(daily)
+      self.monthly_difference = monthly and float(monthly)
+    else:
+      self.daily_difference = None
+      self.monthly_difference = None
+
+    snowflake = int(json['id'])
 
     if avatar := json.get('avatar'):
       ext = 'gif' if avatar.startswith('a_') else 'png'
 
       self.avatar = (
-        f'https://cdn.discordapp.com/avatars/{self.id}/{avatar}.{ext}?size=1024'
+        f'https://cdn.discordapp.com/avatars/{snowflake}/{avatar}.{ext}?size=1024'
       )
     else:
       self.avatar = (
-        f'https://cdn.discordapp.com/embed/avatars/{(self.id >> 22) % 6}.png'
+        f'https://cdn.discordapp.com/embed/avatars/{(snowflake >> 22) % 6}.png'
       )
 
     super().__init__(json)

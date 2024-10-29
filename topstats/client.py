@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Optional, Tuple, List
 from aiohttp import ClientSession, ClientTimeout
+from typing import List, Optional, Tuple
 from asyncio import sleep
 
 from .bot import Bot, PartialBot, RecentBotStats
@@ -111,6 +111,25 @@ class Client:
 
     b = await self.__get(f'/discord/bots/{id}')
     return b and Bot(b)
+
+  async def get_users_bot(self, id: int) -> Optional[List[Bot]]:
+    """
+    Fetches a user's ranked bots from their ID.
+
+    :warning: Data returned by this method may be inaccurate! This is because bots moved to a team will remain on a users account irrespective of ownership.
+
+    :param id: The requested user's ID.
+    :type id: :py:class:`int`
+
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
+
+    :returns: The requested list of ranked bots made by this user. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[List[:class:`.Bot`]]
+    """
+
+    r = await self.__get(f'/discord/users/{id}/bots')
+    return r and [Bot(b) for b in r['bots']]
 
   async def __get_historical_bot_stats(
     self, kind: str, id: int, period: Optional[Period]
