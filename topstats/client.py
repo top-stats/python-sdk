@@ -263,7 +263,7 @@ class Client:
       raise Error('The requested criteria is missing or invalid.')
 
     t = await self.__get(
-      f'/discord/rankings/bots?limit={max(min(limit or 100, 500), 100)}&{sort_by.q}'
+      f'/discord/rankings/bots?limit={max(min(limit or 100, 500), 1)}&{sort_by.q}'
     )
     return t and [PartialBot(bot) for bot in t['data']]
 
