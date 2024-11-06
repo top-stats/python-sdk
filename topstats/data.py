@@ -118,7 +118,7 @@ class Period(Enum):
   LAST_6_HOURS = '6h'
 
   def __repr__(self) -> str:
-    return f'{self.__class__.__name__}.{self.name}'
+    return f'{__class__.__name__}.{self.name}'
 
   def __str__(self) -> str:
     return self.name.replace('_', ' ').title()
