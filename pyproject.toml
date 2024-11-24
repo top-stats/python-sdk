@@ -31,5 +31,5 @@ classifiers = [
 requires-python = ">=3.8"
 
 [project.urls]
-Repository = "https://github.com/top-stats/topstats.py"
+Repository = "https://github.com/top-stats/python-sdk"
 "Support server" = "https://discord.gg/jjEauJXuZc"

@@ -138,6 +138,7 @@ class Bot(PartialBot):
 
   __slots__: Tuple[str, ...] = (
     'owners',
+    'tags',
     'is_deleted',
     'avatar',
     'short_description',
@@ -155,6 +156,9 @@ class Bot(PartialBot):
 
   owners: List[int]
   """A list of this bot's owner IDs."""
+
+  tags: List[str]
+  """A list of this bot's tags."""
 
   is_deleted: bool
   """Whether this bot is deleted or not."""
@@ -185,6 +189,7 @@ class Bot(PartialBot):
 
   def __init__(self, json: dict):
     self.owners = [int(i) for i in (json.get('owners') or ())]
+    self.tags = json.get('tags') or []
     self.is_deleted = json['deleted']
     self.short_description = json['short_desc']
     self.prefix = json['prefix']

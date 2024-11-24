@@ -65,7 +65,7 @@ class Client:
 
       try:
         async with self.__session.get(
-          f'https://api.topstats.gg{path}',
+          f'https://api.topstats.gg/discord{path}',
           headers={
             'Authorization': self.__token,
             'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ class Client:
     :rtype: Optional[:class:`.Bot`]
     """
 
-    b = await self.__get(f'/discord/bots/{id}')
+    b = await self.__get(f'/bots/{id}')
     return b and Bot(b)
 
   async def get_users_bot(self, id: int) -> Optional[List[Bot]]:
@@ -128,7 +128,7 @@ class Client:
     :rtype: Optional[List[:class:`.Bot`]]
     """
 
-    r = await self.__get(f'/discord/users/{id}/bots')
+    r = await self.__get(f'/users/{id}/bots')
     return r and [Bot(b) for b in r['bots']]
 
   async def __get_historical_bot_stats(
@@ -138,7 +138,7 @@ class Client:
       period = Period.ALL_TIME
 
     response = await self.__get(
-      f'/discord/bots/{id}/historical?timeFrame={period.value}&type={kind}'
+      f'/bots/{id}/historical?timeFrame={period.value}&type={kind}'
     )
 
     return response and [Timestamped(data, kind) for data in response['data']]
@@ -237,7 +237,7 @@ class Client:
     :rtype: Optional[:class:`.RecentBotStats`]
     """
 
-    g = await self.__get(f'/discord/bots/{id}/recent')
+    g = await self.__get(f'/bots/{id}/recent')
     return g and RecentBotStats(g)
 
   async def get_top_bots(
@@ -263,7 +263,7 @@ class Client:
       raise Error('The requested criteria is missing or invalid.')
 
     t = await self.__get(
-      f'/discord/rankings/bots?limit={max(min(limit or 100, 500), 1)}&{sort_by.q}'
+      f'/rankings/bots?limit={max(min(limit or 100, 500), 1)}&{sort_by.q}'
     )
     return t and [PartialBot(bot) for bot in t['data']]
 
