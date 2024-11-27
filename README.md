@@ -40,6 +40,18 @@ async def main() -> None:
 
     for first, second in vs:
       print(first, second)
+    
+    # compare up to four bots' historical total votes
+    vs2 = await ts.compare_bot_total_votes(
+      topstats.Period.LAST_YEAR,
+      339254240012664832,
+      432610292342587392,
+      408785106942164992,
+      437808476106784770
+    )
+
+    for first, second, third, fourth in vs2:
+      print(first, second, third, fourth)
 
 if __name__ == '__main__':
   # see https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
