@@ -34,6 +34,12 @@ async def main() -> None:
     
     for b in bots:
       print(b)
+    
+    # compare two bots' historical server count
+    vs = await ts.compare_bot_server_count(432610292342587392, 437808476106784770)
+
+    for first, second in vs:
+      print(first, second)
 
 if __name__ == '__main__':
   # see https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop

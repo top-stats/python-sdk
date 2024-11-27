@@ -96,9 +96,9 @@ class Client:
         delay *= 2
 
   @staticmethod
-  def __validate_ids(*ids: int, has_preceeding: bool = False) -> Iterable[str]:
+  def __validate_ids(*ids: int) -> Iterable[str]:
     ids = tuple(set(ids))
-    ids_len = len(ids) + int(has_preceeding)
+    ids_len = len(ids)
 
     if not (2 <= ids_len <= 4):
       raise Error(f'Expected two to four unique bot IDs to compare, got {ids_len}.')
@@ -137,8 +137,7 @@ class Client:
     :rtype: Optional[List[:class:`.Bot`]]
     """
 
-    ids = Client.__validate_ids(*ids)
-    c = await self.__get(f'/compare/{"/".join(ids)}')
+    c = await self.__get(f'/compare/{"/".join(Client.__validate_ids(*ids))}')
     return c and [Bot(b) for b in c['data']]
 
   async def get_users_bot(self, id: int) -> Optional[List[Bot]]:
@@ -174,23 +173,21 @@ class Client:
 
   async def __compare_historical_bot_stats(
     self, kind: str, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Dict[int, List[Timestamped]]]:
-    first_id = ''
-
+  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     if not isinstance(period, Period):
       if isinstance(period, int):
-        first_id = f'{first_id}/'
+        ids = period, *ids
 
       period = Period.ALL_TIME
 
-    ids = Client.__validate_ids(*ids, has_preceeding=bool(first_id))
-
     c = await self.__get(
-      f'/compare/historical/{first_id}{"/".join(ids)}?timeFrame={period.value}&type={kind}'
+      f'/compare/historical/{"/".join(Client.__validate_ids(*ids))}?timeFrame={period.value}&type={kind}'
     )
-    return c and {
-      int(k): [Timestamped(t, kind) for t in v] for k, v in c['data'].items()
-    }
+    d = c['data']
+
+    return c and zip(
+      *map(lambda i: map(lambda t: Timestamped(t, kind), d[str(i)]), ids)
+    )
 
   async def get_historical_bot_monthly_votes(
     self, id: int, period: Optional[Period] = None
@@ -214,7 +211,7 @@ class Client:
 
   async def compare_bot_monthly_votes(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Dict[int, List[Timestamped]]]:
+  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
     Compares two to four ranked bots' historical monthly votes for a certain period of time.
 
@@ -227,8 +224,8 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested dict of historical monthly votes to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    :returns: The requested iterable of historical monthly votes to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
     return await self.__compare_historical_bot_stats('monthly_votes', period, *ids)
@@ -255,7 +252,7 @@ class Client:
 
   async def compare_bot_total_votes(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Dict[int, List[Timestamped]]]:
+  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
     Compares two to four ranked bots' historical total votes for a certain period of time.
 
@@ -268,8 +265,8 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested dict of historical total votes to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    :returns: The requested iterable of historical total votes to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
     return await self.__compare_historical_bot_stats('total_votes', period, *ids)
@@ -296,7 +293,7 @@ class Client:
 
   async def compare_bot_server_count(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Dict[int, List[Timestamped]]]:
+  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
     Compares two to four ranked bots' historical server count for a certain period of time.
 
@@ -309,8 +306,8 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested dict of historical server count to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    :returns: The requested iterable of historical server count to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
     return await self.__compare_historical_bot_stats('server_count', period, *ids)
@@ -337,7 +334,7 @@ class Client:
 
   async def compare_bot_shard_count(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Dict[int, List[Timestamped]]]:
+  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
     Compares two to four ranked bots' historical shard count for a certain period of time.
 
@@ -350,8 +347,8 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested dict of historical shard count to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    :returns: The requested iterable of historical shard count to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
     return await self.__compare_historical_bot_stats('shard_count', period, *ids)
