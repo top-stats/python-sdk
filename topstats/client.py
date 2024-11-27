@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from aiohttp import ClientSession, ClientTimeout
-from typing import List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 from asyncio import sleep
 
 from .bot import Bot, PartialBot, RecentBotStats
@@ -95,6 +95,16 @@ class Client:
         await sleep(delay)
         delay *= 2
 
+  @staticmethod
+  def __validate_ids(*ids: int, has_preceeding: bool = False) -> Iterable[str]:
+    ids = tuple(set(ids))
+    ids_len = len(ids) + int(has_preceeding)
+
+    if not (2 <= ids_len <= 4):
+      raise Error(f'Expected two to four unique bot IDs to compare, got {ids_len}.')
+
+    return map(str, ids)
+
   async def get_bot(self, id: int) -> Optional[Bot]:
     """
     Fetches a ranked bot from its ID.
@@ -111,6 +121,25 @@ class Client:
 
     b = await self.__get(f'/bots/{id}')
     return b and Bot(b)
+
+  async def compare_bots(self, *ids: int) -> Optional[List[Bot]]:
+    """
+    Compares two to four ranked bots.
+
+    :param ids: The requested two to four unique bot IDs to compare.
+    :type ids: :py:class:`int`
+
+    :exception Error: If the requested unique bot IDs are not within range.
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
+
+    :returns: The requested list of ranked bots to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[List[:class:`.Bot`]]
+    """
+
+    ids = Client.__validate_ids(*ids)
+    c = await self.__get(f'/compare/{"/".join(ids)}')
+    return c and [Bot(b) for b in c['data']]
 
   async def get_users_bot(self, id: int) -> Optional[List[Bot]]:
     """
@@ -143,6 +172,26 @@ class Client:
 
     return response and [Timestamped(data, kind) for data in response['data']]
 
+  async def __compare_historical_bot_stats(
+    self, kind: str, period: Optional[Union[Period, int]], *ids: int
+  ) -> Optional[Dict[int, List[Timestamped]]]:
+    first_id = ''
+
+    if not isinstance(period, Period):
+      if isinstance(period, int):
+        first_id = f'{first_id}/'
+
+      period = Period.ALL_TIME
+
+    ids = Client.__validate_ids(*ids, has_preceeding=bool(first_id))
+
+    c = await self.__get(
+      f'/compare/historical/{first_id}{"/".join(ids)}?timeFrame={period.value}&type={kind}'
+    )
+    return c and {
+      int(k): [Timestamped(t, kind) for t in v] for k, v in c['data'].items()
+    }
+
   async def get_historical_bot_monthly_votes(
     self, id: int, period: Optional[Period] = None
   ) -> Optional[List[Timestamped]]:
@@ -162,6 +211,27 @@ class Client:
     """
 
     return await self.__get_historical_bot_stats('monthly_votes', id, period)
+
+  async def compare_bot_monthly_votes(
+    self, period: Optional[Union[Period, int]], *ids: int
+  ) -> Optional[Dict[int, List[Timestamped]]]:
+    """
+    Compares two to four ranked bots' historical monthly votes for a certain period of time.
+
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
+    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :param ids: The requested two to four unique bot IDs to compare.
+    :type ids: :py:class:`int`
+
+    :exception Error: If the requested unique bot IDs are not within range.
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
+
+    :returns: The requested dict of historical monthly votes to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    """
+
+    return await self.__compare_historical_bot_stats('monthly_votes', period, *ids)
 
   async def get_historical_bot_total_votes(
     self, id: int, period: Optional[Period] = None
@@ -183,6 +253,27 @@ class Client:
 
     return await self.__get_historical_bot_stats('total_votes', id, period)
 
+  async def compare_bot_total_votes(
+    self, period: Optional[Union[Period, int]], *ids: int
+  ) -> Optional[Dict[int, List[Timestamped]]]:
+    """
+    Compares two to four ranked bots' historical total votes for a certain period of time.
+
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
+    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :param ids: The requested two to four unique bot IDs to compare.
+    :type ids: :py:class:`int`
+
+    :exception Error: If the requested unique bot IDs are not within range.
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
+
+    :returns: The requested dict of historical total votes to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    """
+
+    return await self.__compare_historical_bot_stats('total_votes', period, *ids)
+
   async def get_historical_bot_server_count(
     self, id: int, period: Optional[Period] = None
   ) -> Optional[List[Timestamped]]:
@@ -203,6 +294,27 @@ class Client:
 
     return await self.__get_historical_bot_stats('server_count', id, period)
 
+  async def compare_bot_server_count(
+    self, period: Optional[Union[Period, int]], *ids: int
+  ) -> Optional[Dict[int, List[Timestamped]]]:
+    """
+    Compares two to four ranked bots' historical server count for a certain period of time.
+
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
+    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :param ids: The requested two to four unique bot IDs to compare.
+    :type ids: :py:class:`int`
+
+    :exception Error: If the requested unique bot IDs are not within range.
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
+
+    :returns: The requested dict of historical server count to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    """
+
+    return await self.__compare_historical_bot_stats('server_count', period, *ids)
+
   async def get_historical_bot_shard_count(
     self, id: int, period: Optional[Period] = None
   ) -> Optional[List[Timestamped]]:
@@ -222,6 +334,27 @@ class Client:
     """
 
     return await self.__get_historical_bot_stats('shard_count', id, period)
+
+  async def compare_bot_shard_count(
+    self, period: Optional[Union[Period, int]], *ids: int
+  ) -> Optional[Dict[int, List[Timestamped]]]:
+    """
+    Compares two to four ranked bots' historical shard count for a certain period of time.
+
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
+    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :param ids: The requested two to four unique bot IDs to compare.
+    :type ids: :py:class:`int`
+
+    :exception Error: If the requested unique bot IDs are not within range.
+    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
+    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
+
+    :returns: The requested dict of historical shard count to compare. This can be :py:obj:`None` if it does not exist.
+    :rtype: Optional[Dict[:py:class:`int`, List[:class:`.Timestamped`]]]
+    """
+
+    return await self.__compare_historical_bot_stats('shard_count', period, *ids)
 
   async def get_recent_bot_stats(self, id: int) -> Optional[RecentBotStats]:
     """
