@@ -180,14 +180,13 @@ class Client:
 
       period = Period.ALL_TIME
 
+    ids = tuple(Client.__validate_ids(*ids))
     c = await self.__get(
-      f'/compare/historical/{"/".join(Client.__validate_ids(*ids))}?timeFrame={period.value}&type={kind}'
+      f'/compare/historical/{"/".join(ids)}?timeFrame={period.value}&type={kind}'
     )
     d = c['data']
 
-    return c and zip(
-      *map(lambda i: map(lambda t: Timestamped(t, kind), d[str(i)]), ids)
-    )
+    return c and zip(*map(lambda i: map(lambda t: Timestamped(t, kind), d[i]), ids))
 
   async def get_historical_bot_monthly_votes(
     self, id: int, period: Optional[Period] = None
