@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from aiohttp import ClientSession, ClientTimeout
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Iterable, Optional, Tuple, Union
 from asyncio import sleep
 
 from .bot import Bot, PartialBot, RecentBotStats
@@ -122,9 +122,9 @@ class Client:
     b = await self.__get(f'/bots/{id}')
     return b and Bot(b)
 
-  async def compare_bots(self, *ids: int) -> Optional[List[Bot]]:
+  async def compare_bots(self, *ids: int) -> Optional[Iterable[Bot]]:
     """
-    Compares two to four ranked bots.
+    Fetches and yields several ranked bots.
 
     :param ids: The requested two to four unique bot IDs to compare.
     :type ids: :py:class:`int`
@@ -134,13 +134,13 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of ranked bots to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.Bot`]]
+    :rtype: Optional[Iterable[:class:`.Bot`]]
     """
 
     c = await self.__get(f'/compare/{"/".join(Client.__validate_ids(*ids))}')
-    return c and [Bot(b) for b in c['data']]
+    return c and map(Bot, c['data'])
 
-  async def get_users_bot(self, id: int) -> Optional[List[Bot]]:
+  async def get_users_bot(self, id: int) -> Optional[Iterable[Bot]]:
     """
     Fetches a user's ranked bots from their ID.
 
@@ -153,15 +153,15 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of ranked bots made by this user. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.Bot`]]
+    :rtype: Optional[Iterable[:class:`.Bot`]]
     """
 
-    r = await self.__get(f'/users/{id}/bots')
-    return r and [Bot(b) for b in r['bots']]
+    b = await self.__get(f'/users/{id}/bots')
+    return b and map(Bot, b['bots'])
 
   async def __get_historical_bot_stats(
     self, kind: str, id: int, period: Optional[Period]
-  ) -> Optional[List[Timestamped]]:
+  ) -> Optional[Iterable[Timestamped]]:
     if not isinstance(period, Period):
       period = Period.ALL_TIME
 
@@ -169,7 +169,7 @@ class Client:
       f'/bots/{id}/historical?timeFrame={period.value}&type={kind}'
     )
 
-    return response and [Timestamped(data, kind) for data in response['data']]
+    return response and (Timestamped(data, kind) for data in response['data'])
 
   async def __compare_historical_bot_stats(
     self, kind: str, period: Optional[Union[Period, int]], *ids: int
@@ -186,13 +186,13 @@ class Client:
     )
     d = c['data']
 
-    return c and zip(*map(lambda i: map(lambda t: Timestamped(t, kind), d[i]), ids))
+    return c and zip(*((Timestamped(t, kind) for t in d[i]) for i in ids))
 
   async def get_historical_bot_monthly_votes(
     self, id: int, period: Optional[Period] = None
-  ) -> Optional[List[Timestamped]]:
+  ) -> Optional[Iterable[Timestamped]]:
     """
-    Fetches a list of a ranked bot's historical monthly votes for a certain period of time.
+    Fetches and yields a list of a ranked bot's historical monthly votes for a certain period of time.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -203,7 +203,7 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a certain period of time.
 
     :returns: The requested list of this bot's historical monthly votes. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.Timestamped`]]
+    :rtype: Optional[Iterable[:class:`.Timestamped`]]
     """
 
     return await self.__get_historical_bot_stats('monthly_votes', id, period)
@@ -212,7 +212,7 @@ class Client:
     self, period: Optional[Union[Period, int]], *ids: int
   ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
-    Compares two to four ranked bots' historical monthly votes for a certain period of time.
+    Fetches and yields several ranked bots' historical monthly votes for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
     :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
@@ -223,7 +223,7 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested iterable of historical monthly votes to compare. This can be :py:obj:`None` if it does not exist.
+    :returns: The requested list of historical monthly votes to compare. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
@@ -231,9 +231,9 @@ class Client:
 
   async def get_historical_bot_total_votes(
     self, id: int, period: Optional[Period] = None
-  ) -> Optional[List[Timestamped]]:
+  ) -> Optional[Iterable[Timestamped]]:
     """
-    Fetches a list of a ranked bot's historical total votes for a certain period of time.
+    Fetches and yields a list of a ranked bot's historical total votes for a certain period of time.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -244,7 +244,7 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of this bot's historical total votes. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.Timestamped`]]
+    :rtype: Optional[Iterable[:class:`.Timestamped`]]
     """
 
     return await self.__get_historical_bot_stats('total_votes', id, period)
@@ -253,7 +253,7 @@ class Client:
     self, period: Optional[Union[Period, int]], *ids: int
   ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
-    Compares two to four ranked bots' historical total votes for a certain period of time.
+    Fetches and yields several ranked bots' historical total votes for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
     :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
@@ -264,7 +264,7 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested iterable of historical total votes to compare. This can be :py:obj:`None` if it does not exist.
+    :returns: The requested list of historical total votes to compare. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
@@ -272,9 +272,9 @@ class Client:
 
   async def get_historical_bot_server_count(
     self, id: int, period: Optional[Period] = None
-  ) -> Optional[List[Timestamped]]:
+  ) -> Optional[Iterable[Timestamped]]:
     """
-    Fetches a list of a ranked bot's historical server count for a certain period of time.
+    Fetches and yields a list of a ranked bot's historical server count for a certain period of time.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -285,7 +285,7 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of this bot's historical server count. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.Timestamped`]]
+    :rtype: Optional[Iterable[:class:`.Timestamped`]]
     """
 
     return await self.__get_historical_bot_stats('server_count', id, period)
@@ -294,7 +294,7 @@ class Client:
     self, period: Optional[Union[Period, int]], *ids: int
   ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
-    Compares two to four ranked bots' historical server count for a certain period of time.
+    Fetches and yields several ranked bots' historical server count for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
     :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
@@ -305,7 +305,7 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested iterable of historical server count to compare. This can be :py:obj:`None` if it does not exist.
+    :returns: The requested list of historical server count to compare. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
@@ -313,9 +313,9 @@ class Client:
 
   async def get_historical_bot_shard_count(
     self, id: int, period: Optional[Period] = None
-  ) -> Optional[List[Timestamped]]:
+  ) -> Optional[Iterable[Timestamped]]:
     """
-    Fetches a list of a ranked bot's historical shard count for a certain period of time.
+    Fetches and yields a list of a ranked bot's historical shard count for a certain period of time.
 
     :param id: The requested ranked bot's ID.
     :type id: :py:class:`int`
@@ -326,7 +326,7 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of this bot's historical shard count. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.Timestamped`]]
+    :rtype: Optional[Iterable[:class:`.Timestamped`]]
     """
 
     return await self.__get_historical_bot_stats('shard_count', id, period)
@@ -335,7 +335,7 @@ class Client:
     self, period: Optional[Union[Period, int]], *ids: int
   ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
     """
-    Compares two to four ranked bots' historical shard count for a certain period of time.
+    Fetches and yields several ranked bots' historical shard count for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
     :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
@@ -346,7 +346,7 @@ class Client:
     :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
-    :returns: The requested iterable of historical shard count to compare. This can be :py:obj:`None` if it does not exist.
+    :returns: The requested list of historical shard count to compare. This can be :py:obj:`None` if it does not exist.
     :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
     """
 
@@ -371,9 +371,9 @@ class Client:
 
   async def get_top_bots(
     self, sort_by: SortBy, *, limit: Optional[int] = None
-  ) -> Optional[List[PartialBot]]:
+  ) -> Optional[Iterable[PartialBot]]:
     """
-    Fetches a list of top bots ranked on topstats.gg based on a certain criteria.
+    Fetches and yields a list of top bots ranked on topstats.gg based on a certain criteria.
 
     :param sort_by: The requested criteria and sorting method.
     :type sort_by: :class:`.SortBy`
@@ -385,7 +385,7 @@ class Client:
     :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
 
     :returns: The requested list of top bots ranked on topstats.gg based on the requested criteria. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[List[:class:`.PartialBot`]]
+    :rtype: Optional[Iterable[:class:`.PartialBot`]]
     """
 
     if not isinstance(sort_by, SortBy):
@@ -394,7 +394,7 @@ class Client:
     t = await self.__get(
       f'/rankings/bots?limit={max(min(limit or 100, 500), 1)}&{sort_by.q}'
     )
-    return t and [PartialBot(bot) for bot in t['data']]
+    return t and map(PartialBot, t['data'])
 
   async def close(self) -> None:
     """Closes the :class:`.Client` object. Nothing will happen if the client uses a pre-existing :class:`~aiohttp.ClientSession` or if the session is already closed."""
