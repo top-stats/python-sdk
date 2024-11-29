@@ -1,4 +1,4 @@
-sphinx_rtd_theme
 aiohttp
-discord.py
-six
+furo
+pyyaml
+sphinx-reredirects

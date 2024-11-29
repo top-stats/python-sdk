@@ -1,53 +1,63 @@
-# dblstats
+# [topstats][pypi-url] [![pypi][pypi-image]][pypi-url] [![downloads][downloads-image]][pypi-url]
 
-An easy to use async [dblstatistics.com](https://dblstatistics.com) API wrapper.
+[pypi-image]: https://img.shields.io/pypi/v/topstats.svg?style=flat-square
+[pypi-url]: https://pypi.org/project/topstats/
+[downloads-image]: https://img.shields.io/pypi/dm/topstats?style=flat-square
 
-### README information
+The official Python API wrapper for [topstats.gg](https://topstats.gg).
 
-#### Command execution
+## Installation
 
-When commands that need to be executed are shown in this documentation, 
-optional command will be surrounded by brackets.
-
-#### System specific command execution
-
-Since python has a different command call on Linus and Windows we specify both
-in the documentation.
-```
-documentation: (py -3 | python3) command
-windows: py -3 command
-linux: python3 command
+```console
+pip install topstats
 ```
 
-## Installing
+## Example
 
-To install the library you can just run the following pip command.
+```py
+# import the module
+import topstats
+
+import asyncio
+import os
+
+async def main() -> None:
+  # declare the client. the measuring unit used defaults to the metric system (celcius, km/h, etc.)
+  async with topstats.Client('your topstats.gg API token') as ts:
+    # fetch a ranked bot from its bot ID
+    bot = await ts.get(432610292342587392)
+    
+    print(bot)
+
+    # fetch topstats.gg's top bots
+    bots = await ts.get_top_bots(sort_by=topstats.SortBy.server_count())
+    
+    for b in bots:
+      print(b)
+    
+    # compare two bots' historical server count
+    vs = await ts.compare_bot_server_count(432610292342587392, 437808476106784770)
+
+    for first, second in vs:
+      print(first, second)
+    
+    # compare up to four bots' historical total votes
+    vs2 = await ts.compare_bot_total_votes(
+      topstats.Period.LAST_YEAR,
+      339254240012664832,
+      432610292342587392,
+      408785106942164992,
+      437808476106784770
+    )
+
+    for first, second, third, fourth in vs2:
+      print(first, second, third, fourth)
+
+if __name__ == '__main__':
+  # see https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
+  # for more details
+  if os.name == 'nt':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+  
+  asyncio.run(main())
 ```
-(py -3 -m | python3 -m) pip install dblstats
-```
-
-## Executing example scripts
-
-### Requirements
-
-The example scripts might be discord bots.
-If so execute the following command to install the dependencies.
-
-```
-(py -3 -m | python3 -m) pip install utilsx
-```
-
-### Running
-
-To execute the example scripts that are located in `examples` just execute 
-the following command.
-
-```
-(py -3 | python3) script_name.py
-```
-
-## Links
-
-* [Documentation](https://official-dblstats.readthedocs.io/en/latest/)
-* [dblstatistics.com Discord Sever](https://discord.gg/Qd34uz7qDY)
-* [dblstatistics.com documentation](https://dblstatistics.com/api/docs)

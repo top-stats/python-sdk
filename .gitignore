@@ -1,5 +1,6 @@
-.idea/
+**/__pycache__/
+topstats.egg-info/
+docs/_build/
 dist/
-dblstats/__pycache__/
-dblstats/objects/__pycache__/
-dblstats/utils/__pycache__/
+.ruff_cache/
+.vscode/
