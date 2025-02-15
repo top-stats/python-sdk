@@ -65,7 +65,7 @@ class TimestampedBotStats(BotStats):
   """Dated timestamp of this bot's stats."""
 
   def __init__(self, json: dict):
-    self.timestamp = datetime.fromisoformat(json['time'])
+    self.timestamp = datetime.fromisoformat(json['time'].replace('Z', '+00:00'))
 
     super().__init__(json)
 
@@ -194,7 +194,7 @@ class Bot(PartialBot):
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
-    self.approved_at = datetime.fromisoformat(json['approved_at'])
+    self.approved_at = datetime.fromisoformat(json['approved_at'].replace('Z', '+00:00'))
     self.timestamp = datetime.fromtimestamp(
       int(json['unix_timestamp']) // 1000, tz=timezone.utc
     )
