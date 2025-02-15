@@ -92,7 +92,7 @@ class Timestamped(DataPoint):
   """Dated timestamp of this data point."""
 
   def __init__(self, json: dict, key: str):
-    self.timestamp = datetime.fromisoformat(json['time'])
+    self.timestamp = datetime.fromisoformat(json['time'].replace('Z', '+00:00'))
 
     super().__init__(json[key])
 
