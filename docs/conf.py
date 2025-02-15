@@ -26,7 +26,7 @@ intersphinx_mapping = {
 
 redirects = {
   'support-server': 'https://discord.com/invite/jjEauJXuZc',
-  'repository': 'https://github.com/top-stats/dblstats.py',
+  'repository': 'https://github.com/top-stats/python-sdk',
   'raw-api-reference': 'https://docs.topstats.gg/introduction/introduction/',
 }
 

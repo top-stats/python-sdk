@@ -36,7 +36,7 @@ class Client:
   """
   The class that lets you interact with the API.
 
-  :param token: The API token to use with the API.
+  :param token: The API token to use with the API. To retrieve your topstats.gg API token, see https://docs.topstats.gg/authentication/tokens/.
   :type token: :py:class:`str`
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: Optional[:class:`~aiohttp.ClientSession`]
@@ -69,7 +69,7 @@ class Client:
           headers={
             'Authorization': self.__token,
             'Content-Type': 'application/json',
-            'User-Agent': 'topstats (https://github.com/top-stats/dblstats.py 1.0.0) Python/',
+            'User-Agent': 'topstats (https://github.com/top-stats/python-sdk 1.0.1) Python/',
           },
         ) as resp:
           try:

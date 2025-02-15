@@ -24,7 +24,7 @@ import asyncio
 import os
 
 async def main() -> None:
-  # declare the client. the measuring unit used defaults to the metric system (celcius, km/h, etc.)
+  # declare the client. to retrieve your topstats.gg token, see https://docs.topstats.gg/authentication/tokens/
   async with topstats.Client('your topstats.gg API token') as ts:
     # fetch a ranked bot from its bot ID
     bot = await ts.get_bot(432610292342587392)
