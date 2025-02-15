@@ -14,6 +14,8 @@ pip install topstats
 
 ## Example
 
+For more information, please read the [documentation](https://topstats.readthedocs.io/en/latest/).
+
 ```py
 # import the module
 import topstats
