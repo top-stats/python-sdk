@@ -41,28 +41,28 @@ def test_attributes(obj: object) -> None:
 async def run() -> None:
   async with topstats.Client(os.getenv('TOPSTATS_TOKEN')) as ts:
     bot = await ts.get_bot(432610292342587392)
-  
+
     test_attributes(bot)
-  
+
     bots = await ts.get_top_bots(sort_by=topstats.SortBy.server_count())
-    
+
     for b in bots:
       test_attributes(b)
-    
+
     vs = await ts.compare_bot_server_count(432610292342587392, 437808476106784770)
-  
+
     for first, second in vs:
       test_attributes(first)
       test_attributes(second)
-    
+
     vs2 = await ts.compare_bot_total_votes(
       topstats.Period.LAST_YEAR,
       339254240012664832,
       432610292342587392,
       408785106942164992,
-      437808476106784770
+      437808476106784770,
     )
-  
+
     for first, second, third, fourth in vs2:
       test_attributes(first)
       test_attributes(second)
