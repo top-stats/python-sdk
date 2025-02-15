@@ -15,9 +15,7 @@ topstats_
 .. |downloads| image:: https://img.shields.io/pypi/dm/topstats?style=flat-square
 .. _downloads: https://pypi.org/project/topstats/
 
-The community-maintained Python API wrapper for `topstats.gg`_.
-
-.. _topstats.gg: https://topstats.gg/
+The community-maintained Python API wrapper for `topstats.gg <https://topstats.gg/>`_.
 
 Installation
 ------------
