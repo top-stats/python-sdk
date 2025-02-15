@@ -1,7 +1,9 @@
 prune .ruff_cache
 prune docs
 exclude .gitattributes
+exclude .github
 exclude .gitignore
 exclude .readthedocs.yml
 exclude ruff.toml
+exclude test.py
 exclude LICENSE
