@@ -1,12 +1,11 @@
 name: Run tests
 on:
   push:
-    branches: [ master, rewrite ]
+    branches: [master]
     paths:
       - '.github/workflows/test.yml'
       - 'topstats/**/*.py'
   pull_request:
-    branches: [ master, rewrite ]
     paths:
       - '.github/workflows/test.yml'
       - 'topstats/**/*.py'
@@ -15,18 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ 3.9, '3.10', 3.11, 3.12, 3.13 ]
+        python-version: [3.9, '3.10', 3.11, 3.12, 3.13]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: python -m pip install . ruff
-      - name: Lint with ruff
-        run: ruff check
-      - name: Test with pytest
-        run: python test.py
+      - name: Run tests
+        run: python3 test.py
         env:
           TOPSTATS_TOKEN: ${{ secrets.TOPSTATS_TOKEN }}
+      - name: Install dev dependencies
+        if: ${{ matrix.python-version == 3.13 }}
+        run: python3 -m pip install . ruff
+      - name: Lint with ruff
+        if: ${{ matrix.python-version == 3.13 }}
+        run: python3 -m ruff check
