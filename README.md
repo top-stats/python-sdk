@@ -4,7 +4,7 @@
 [pypi-url]: https://pypi.org/project/topstats/
 [downloads-image]: https://img.shields.io/pypi/dm/topstats?style=flat-square
 
-The official Python API wrapper for [topstats.gg](https://topstats.gg).
+The community-maintained Python API wrapper for [topstats.gg](https://topstats.gg).
 
 ## Installation
 
