@@ -20,13 +20,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: python3 -m pip install .
       - name: Run tests
         run: python3 test.py
         env:
           TOPSTATS_TOKEN: ${{ secrets.TOPSTATS_TOKEN }}
       - name: Install dev dependencies
         if: ${{ matrix.python-version == 3.13 }}
-        run: python3 -m pip install . ruff
+        run: python3 -m pip install ruff
       - name: Lint with ruff
         if: ${{ matrix.python-version == 3.13 }}
         run: python3 -m ruff check
