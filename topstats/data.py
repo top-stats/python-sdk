@@ -63,7 +63,7 @@ class DataPoint:
 
 
 class Ranked(DataPoint):
-  """A ranked data point in topstats.gg. This class contains a value and its rank compared to others and/or difference compared to its previous data point."""
+  """A ranked data point. This class contains a value and its rank compared to others and/or difference compared to its previous data point."""
 
   __slots__: Tuple[str, ...] = ('rank', 'difference')
 
@@ -84,7 +84,7 @@ class Ranked(DataPoint):
 
 
 class Timestamped(DataPoint):
-  """A timestamped data point in topstats.gg. This class contains a value and its dated timestamp."""
+  """A timestamped data point. This class contains a value and its dated timestamp."""
 
   __slots__: Tuple[str, ...] = ('timestamp',)
 
@@ -127,7 +127,7 @@ class Period(Enum):
 
 
 class SortBy:
-  """The requested sorting method for sorting ranked bots in topstats.gg."""
+  """The requested sorting method for sorting ranked bots."""
 
   __slots__: Tuple[str, ...] = ('q',)
 

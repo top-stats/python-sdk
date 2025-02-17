@@ -52,7 +52,7 @@ class BotStats:
 
 
 class TimestampedBotStats(BotStats):
-  """A timestamped bot stats in topstats.gg. This class contains several data points and their dated timestamp."""
+  """A timestamped bot stats. This class contains several data points and their dated timestamp."""
 
   __slots__: Tuple[str, ...] = ('timestamp',)
 
@@ -91,7 +91,7 @@ class RecentBotStats:
 
 
 class PartialBot(BotStats):
-  """A brief information of a ranked bot in topstats.gg."""
+  """A brief information of a ranked bot."""
 
   __slots__: Tuple[str, ...] = ('id', 'name')
 
@@ -129,7 +129,7 @@ class PartialBot(BotStats):
 
 
 class Bot(PartialBot):
-  """A detailed information of a ranked bot in topstats.gg."""
+  """A detailed information of a ranked bot."""
 
   __slots__: Tuple[str, ...] = (
     'owners',
