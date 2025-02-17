@@ -69,7 +69,7 @@ class Client:
           headers={
             'Authorization': self.__token,
             'Content-Type': 'application/json',
-            'User-Agent': 'topstats (https://github.com/top-stats/python-sdk 1.0.1) Python/',
+            'User-Agent': 'topstats (https://github.com/top-stats/python-sdk 1.1.0) Python/',
           },
         ) as resp:
           try:
