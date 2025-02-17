@@ -311,47 +311,6 @@ class Client:
 
     return await self.__compare_historical_bot_stats('server_count', period, *ids)
 
-  async def get_historical_bot_shard_count(
-    self, id: int, period: Optional[Period] = None
-  ) -> Optional[Iterable[Timestamped]]:
-    """
-    Fetches and yields a list of a ranked bot's historical shard count for a certain period of time.
-
-    :param id: The requested ranked bot's ID.
-    :type id: :py:class:`int`
-    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
-    :type period: Optional[:class:`.Period`]
-
-    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
-
-    :returns: The requested list of this bot's historical shard count. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[:class:`.Timestamped`]]
-    """
-
-    return await self.__get_historical_bot_stats('shard_count', id, period)
-
-  async def compare_bot_shard_count(
-    self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
-    """
-    Fetches and yields several ranked bots' historical shard count for a certain period of time.
-
-    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
-    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
-    :param ids: The requested two to four unique bot IDs to compare.
-    :type ids: :py:class:`int`
-
-    :exception Error: If the requested unique bot IDs are not within range.
-    :exception RequestError: If the :class:`~aiohttp.ClientSession` used by the :class:`.Client` object is already closed, or if the :class:`.Client` couldn't send a web request to the web server.
-    :exception Ratelimited: If the client got ratelimited and is not allowed to make requests for a period of time.
-
-    :returns: The requested list of historical shard count to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
-    """
-
-    return await self.__compare_historical_bot_stats('shard_count', period, *ids)
-
   async def get_recent_bot_stats(self, id: int) -> Optional[RecentBotStats]:
     """
     Fetches recent stats of a ranked bot for the past 30 hours and past month.

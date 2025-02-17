@@ -170,14 +170,3 @@ class SortBy:
     """
 
     return SortBy('server_count', ascending)
-
-  @staticmethod
-  def shard_count(*, ascending: bool = False) -> 'SortBy':
-    """
-    Sorts ranked bots by their shard count.
-
-    :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
-    :type ascending: :py:class:`bool`
-    """
-
-    return SortBy('shard_count', ascending)

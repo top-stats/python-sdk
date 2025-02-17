@@ -34,7 +34,6 @@ class BotStats:
     'monthly_votes',
     'total_votes',
     'server_count',
-    'shard_count',
   )
 
   monthly_votes: Ranked
@@ -46,14 +45,10 @@ class BotStats:
   server_count: Ranked
   """This bot's server count."""
 
-  shard_count: Ranked
-  """This bot's shard count."""
-
   def __init__(self, json: dict):
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.total_votes = Ranked(json, 'total_votes')
     self.server_count = Ranked(json, 'server_count')
-    self.shard_count = Ranked(json, 'shard_count')
 
 
 class TimestampedBotStats(BotStats):
