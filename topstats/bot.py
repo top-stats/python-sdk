@@ -34,7 +34,6 @@ class BotStats:
     'monthly_votes',
     'total_votes',
     'server_count',
-    'shard_count',
   )
 
   monthly_votes: Ranked
@@ -46,18 +45,14 @@ class BotStats:
   server_count: Ranked
   """This bot's server count."""
 
-  shard_count: Ranked
-  """This bot's shard count."""
-
   def __init__(self, json: dict):
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.total_votes = Ranked(json, 'total_votes')
     self.server_count = Ranked(json, 'server_count')
-    self.shard_count = Ranked(json, 'shard_count')
 
 
 class TimestampedBotStats(BotStats):
-  """A timestamped bot stats in topstats.gg. This class contains several data points and their dated timestamp."""
+  """A timestamped bot stats. This class contains several data points and their dated timestamp."""
 
   __slots__: Tuple[str, ...] = ('timestamp',)
 
@@ -70,7 +65,7 @@ class TimestampedBotStats(BotStats):
     super().__init__(json)
 
   def __repr__(self) -> str:
-    return f'<{__class__.__name__} monthly_votes={self.monthly_votes!r} total_votes={self.total_votes!r} server_count={self.server_count!r} shard_count={self.shard_count!r} timestamp={self.timestamp!r}>'
+    return f'<{__class__.__name__} monthly_votes={self.monthly_votes!r} total_votes={self.total_votes!r} server_count={self.server_count!r} timestamp={self.timestamp!r}>'
 
 
 class RecentBotStats:
@@ -96,7 +91,7 @@ class RecentBotStats:
 
 
 class PartialBot(BotStats):
-  """A brief information of a ranked bot in topstats.gg."""
+  """A brief information of a ranked bot."""
 
   __slots__: Tuple[str, ...] = ('id', 'name')
 
@@ -134,7 +129,7 @@ class PartialBot(BotStats):
 
 
 class Bot(PartialBot):
-  """A detailed information of a ranked bot in topstats.gg."""
+  """A detailed information of a ranked bot."""
 
   __slots__: Tuple[str, ...] = (
     'owners',
@@ -148,7 +143,6 @@ class Bot(PartialBot):
     'monthly_votes',
     'server_count',
     'total_votes',
-    'shard_count',
     'timestamp',
     'daily_difference',
     'monthly_difference',
