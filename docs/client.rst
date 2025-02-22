@@ -18,5 +18,3 @@ Client reference
 
 .. autoclass:: topstats.errors.Ratelimited()
    :members:
-
-   .. autoattribute:: Ratelimited.message

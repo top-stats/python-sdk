@@ -37,13 +37,13 @@ class BotStats:
   )
 
   monthly_votes: Ranked
-  """This bot's monthly votes."""
+  """The amount of votes this bot has this month."""
 
   total_votes: Ranked
-  """This bot's total votes."""
+  """The amount of votes this bot has."""
 
   server_count: Ranked
-  """This bot's server count."""
+  """The amount servers this bot is in."""
 
   def __init__(self, json: dict):
     self.monthly_votes = Ranked(json, 'monthly_votes')
@@ -52,12 +52,12 @@ class BotStats:
 
 
 class TimestampedBotStats(BotStats):
-  """A timestamped bot stats. This class contains several data points and their dated timestamp."""
+  """A Discord bot's timestamped stats. This class contains several data points and their dated timestamps."""
 
   __slots__: Tuple[str, ...] = ('timestamp',)
 
   timestamp: datetime
-  """Dated timestamp of this bot's stats."""
+  """When this stats was retrieved."""
 
   def __init__(self, json: dict):
     self.timestamp = datetime.fromisoformat(json['time'].replace('Z', '+00:00'))
@@ -69,7 +69,7 @@ class TimestampedBotStats(BotStats):
 
 
 class RecentBotStats:
-  """A list of a ranked bot's recent stats for the past 30 hours and past month."""
+  """A list of a Discord bot's recent stats for the past 30 hours and past month."""
 
   __slots__: Tuple[str, ...] = (
     'hourly',
@@ -91,7 +91,7 @@ class RecentBotStats:
 
 
 class PartialBot(BotStats):
-  """A brief information of a ranked bot."""
+  """A brief information of a Discord bot."""
 
   __slots__: Tuple[str, ...] = ('id', 'name')
 
@@ -129,7 +129,7 @@ class PartialBot(BotStats):
 
 
 class Bot(PartialBot):
-  """A detailed information of a ranked bot."""
+  """A detailed information of a Discord bot."""
 
   __slots__: Tuple[str, ...] = (
     'owners',
@@ -170,10 +170,10 @@ class Bot(PartialBot):
   """The website URL of this bot."""
 
   approved_at: datetime
-  """The date when this bot was approved on Top.gg."""
+  """When this bot was approved on Top.gg."""
 
   timestamp: datetime
-  """The date when this bot was last updated by topstats.gg."""
+  """When this bot was updated by topstats.gg."""
 
   daily_difference: Optional[float]
   """Difference percentage from the previous day. This can be :py:obj:`None`."""

@@ -26,7 +26,7 @@ import os
 async def main() -> None:
   # declare the client. to retrieve your topstats.gg token, see https://docs.topstats.gg/authentication/tokens/
   async with topstats.Client('your topstats.gg API token') as ts:
-    # fetch a ranked bot from its bot ID
+    # fetch a bot from its ID
     bot = await ts.get_bot(432610292342587392)
     
     print(bot)
@@ -37,13 +37,19 @@ async def main() -> None:
     for b in bots:
       print(b)
     
+    # fetch a bot's historical server count
+    sc = await ts.get_historical_bot_server_count(432610292342587392)
+
+    for server_count in sc:
+      print(server_count)
+    
     # compare two bots' historical server count
     vs = await ts.compare_bot_server_count(432610292342587392, 437808476106784770)
 
     for first, second in vs:
       print(first, second)
     
-    # compare up to four bots' historical total votes
+    # compare up to four bots' historical total vote count
     vs2 = await ts.compare_bot_total_votes(
       topstats.Period.LAST_YEAR,
       339254240012664832,
