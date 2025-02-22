@@ -1,7 +1,7 @@
 name: Run tests
 on:
   push:
-    branches: [master, add-ratelimiter]
+    branches: [master]
     paths:
       - '.github/workflows/test.yml'
       - 'topstats/**/*.py'
