@@ -71,17 +71,17 @@ class Client:
 
     endpoint_ratelimits = namedtuple(
       'EndpointRatelimits',
-      'bots_id bots_id_historical bots_id_recent compare_id compare_historical_id rankings_bots users_id_bots',
+      'bots bots_historical bots_recent compare compare_historical rankings_bots users_bots',
     )
 
     self.__ratelimiters = endpoint_ratelimits(
-      bots_id=Ratelimiter(59, 60),
-      bots_id_historical=Ratelimiter(59, 60),
-      bots_id_recent=Ratelimiter(59, 60),
-      compare_id=Ratelimiter(59, 60),
-      compare_historical_id=Ratelimiter(59, 60),
+      bots=Ratelimiter(59, 60),
+      bots_historical=Ratelimiter(59, 60),
+      bots_recent=Ratelimiter(59, 60),
+      compare=Ratelimiter(59, 60),
+      compare_historical=Ratelimiter(59, 60),
       rankings_bots=Ratelimiter(59, 60),
-      users_id_bots=Ratelimiter(59, 60),
+      users_bots=Ratelimiter(59, 60),
     )
     self.__current_ratelimits = endpoint_ratelimits(
       None, None, None, None, None, None, None
@@ -99,7 +99,9 @@ class Client:
     if self.__session.closed:
       raise Error('Client session is already closed.')
 
-    ratelimiter_key = sub(r'\d+', 'id', path)[1:].replace('/', '_')
+    ratelimiter_key = sub(
+      '_{2,}', '_', sub(r'\d+', '', path).strip('/').replace('/', '_')
+    )
     current_ratelimit = getattr(self.__current_ratelimits, ratelimiter_key)
 
     if current_ratelimit is not None:

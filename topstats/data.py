@@ -136,7 +136,7 @@ class SortBy:
     sort_by: str,
     ascending: bool,
   ):
-    self.__by = sort_by
+    self.__by = f'{sort_by}_rank'
     self.__method = f'{"a" if ascending else "de"}sc'
 
   @staticmethod
