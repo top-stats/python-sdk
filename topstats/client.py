@@ -420,8 +420,8 @@ class Client:
       '/rankings/bots',
       default_value={},
       limit=max(min(limit or 100, 500), 1),
-      sortBy=sort_by.__by,
-      sortMethod=sort_by.__method,
+      sortBy=sort_by._SortBy__by,
+      sortMethod=sort_by._SortBy__method,
     )
     return map(PartialBot, t.get('data', ()))
 
