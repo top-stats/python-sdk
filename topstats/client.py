@@ -253,7 +253,7 @@ class Client:
     self, id: int, period: Optional[Period] = None
   ) -> Optional[Iterable[Timestamped]]:
     """
-    Fetches and yields a list of a Discord bot's historical monthly vote count for a certain period of time.
+    Fetches and yields a Discord bot's historical monthly vote count for a certain period of time.
 
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
@@ -296,7 +296,7 @@ class Client:
     self, id: int, period: Optional[Period] = None
   ) -> Optional[Iterable[Timestamped]]:
     """
-    Fetches and yields a list of a Discord bot's historical total vote count for a certain period of time.
+    Fetches and yields a Discord bot's historical total vote count for a certain period of time.
 
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
@@ -339,7 +339,7 @@ class Client:
     self, id: int, period: Optional[Period] = None
   ) -> Optional[Iterable[Timestamped]]:
     """
-    Fetches and yields a list of a Discord bot's historical server count for a certain period of time.
+    Fetches and yields a Discord bot's historical server count for a certain period of time.
 
     :param id: The requested bot's ID.
     :type id: :py:class:`int`

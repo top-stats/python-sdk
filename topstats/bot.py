@@ -69,7 +69,7 @@ class TimestampedBotStats(BotStats):
 
 
 class RecentBotStats:
-  """A list of a Discord bot's recent stats for the past 30 hours and past month."""
+  """A Discord bot's recent stats for the past 30 hours and past month."""
 
   __slots__: Tuple[str, ...] = (
     'hourly',
@@ -77,10 +77,10 @@ class RecentBotStats:
   )
 
   hourly: List[TimestampedBotStats]
-  """A list of this bot's stats for the past 30 hours."""
+  """This bot's stats for the past 30 hours."""
 
   daily: List[TimestampedBotStats]
-  """A list of this bot's stats for the past month."""
+  """This bot's stats for the past month."""
 
   def __init__(self, json: dict):
     self.hourly = [TimestampedBotStats(entry) for entry in json['hourlyData']]
@@ -96,10 +96,10 @@ class PartialBot(BotStats):
   __slots__: Tuple[str, ...] = ('id', 'name')
 
   id: int
-  """The ID of this bot."""
+  """This bot's ID."""
 
   name: str
-  """The username of this bot."""
+  """This bot's username."""
 
   def __init__(self, json: dict):
     self.id = int(json['id'])
@@ -121,7 +121,7 @@ class PartialBot(BotStats):
 
   @property
   def created_at(self) -> datetime:
-    """The date when this bot was created."""
+    """When this bot was created."""
 
     return datetime.fromtimestamp(
       ((self.id >> 22) + 1420070400000) // 1000, tz=timezone.utc
@@ -149,10 +149,10 @@ class Bot(PartialBot):
   )
 
   owners: List[int]
-  """A list of this bot's owner IDs."""
+  """This bot's owner IDs."""
 
   tags: List[str]
-  """A list of this bot's tags."""
+  """This bot's tags."""
 
   is_deleted: bool
   """Whether this bot is deleted or not."""
@@ -161,13 +161,13 @@ class Bot(PartialBot):
   """This bot's avatar URL. Its format will either be PNG or GIF if animated."""
 
   short_description: str
-  """The short description of this bot."""
+  """This bot's short description."""
 
   prefix: str
-  """The prefix of this bot."""
+  """This bot's prefix."""
 
   website: str
-  """The website URL of this bot."""
+  """This bot's website URL."""
 
   approved_at: datetime
   """When this bot was approved on Top.gg."""
