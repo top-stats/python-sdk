@@ -48,7 +48,7 @@ class Client:
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: Optional[:class:`~aiohttp.ClientSession`]
 
-  :raises Error: If ``token`` is not a :py:class:`str`.
+  :exception TypeError: If ``token`` is not a :py:class:`str`.
   """
 
   __slots__: Tuple[str, ...] = (
@@ -407,6 +407,7 @@ class Client:
     :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``500``.
     :type limit: Optional[:py:class:`int`]
 
+    :exception TypeError: If the requested sorting criteria is of invalid type.
     :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
     :exception RequestError: If the client received a non-favorable response from the API.
     :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
