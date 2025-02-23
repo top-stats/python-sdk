@@ -157,7 +157,7 @@ class Client:
 
           return await self.__get(path, **params)
 
-        raise RequestError(json.get('message'), status) from None
+        raise RequestError(json and json.get('message'), status) from None
 
   @staticmethod
   def __validate_ids(*ids: int) -> Iterable[str]:
