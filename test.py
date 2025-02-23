@@ -49,6 +49,11 @@ async def run() -> None:
     for b in bots:
       test_attributes(b)
 
+    sc = await ts.get_historical_bot_server_count(432610292342587392)
+
+    for server_count in sc:
+      test_attributes(server_count)
+
     vs = await ts.compare_bot_server_count(432610292342587392, 437808476106784770)
 
     for first, second in vs:

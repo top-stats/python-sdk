@@ -37,13 +37,13 @@ class BotStats:
   )
 
   monthly_votes: Ranked
-  """This bot's monthly votes."""
+  """The amount of votes this bot has this month."""
 
   total_votes: Ranked
-  """This bot's total votes."""
+  """The amount of votes this bot has."""
 
   server_count: Ranked
-  """This bot's server count."""
+  """The amount servers this bot is in."""
 
   def __init__(self, json: dict):
     self.monthly_votes = Ranked(json, 'monthly_votes')
@@ -52,12 +52,12 @@ class BotStats:
 
 
 class TimestampedBotStats(BotStats):
-  """A timestamped bot stats. This class contains several data points and their dated timestamp."""
+  """A Discord bot's timestamped stats. This class contains several data points and their dated timestamps."""
 
   __slots__: Tuple[str, ...] = ('timestamp',)
 
   timestamp: datetime
-  """Dated timestamp of this bot's stats."""
+  """When this stats was retrieved."""
 
   def __init__(self, json: dict):
     self.timestamp = datetime.fromisoformat(json['time'].replace('Z', '+00:00'))
@@ -69,7 +69,7 @@ class TimestampedBotStats(BotStats):
 
 
 class RecentBotStats:
-  """A list of a ranked bot's recent stats for the past 30 hours and past month."""
+  """A Discord bot's recent stats for the past 30 hours and past month."""
 
   __slots__: Tuple[str, ...] = (
     'hourly',
@@ -77,10 +77,10 @@ class RecentBotStats:
   )
 
   hourly: List[TimestampedBotStats]
-  """A list of this bot's stats for the past 30 hours."""
+  """This bot's stats for the past 30 hours."""
 
   daily: List[TimestampedBotStats]
-  """A list of this bot's stats for the past month."""
+  """This bot's stats for the past month."""
 
   def __init__(self, json: dict):
     self.hourly = [TimestampedBotStats(entry) for entry in json['hourlyData']]
@@ -91,15 +91,15 @@ class RecentBotStats:
 
 
 class PartialBot(BotStats):
-  """A brief information of a ranked bot."""
+  """A brief information of a Discord bot."""
 
   __slots__: Tuple[str, ...] = ('id', 'name')
 
   id: int
-  """The ID of this bot."""
+  """This bot's ID."""
 
   name: str
-  """The username of this bot."""
+  """This bot's username."""
 
   def __init__(self, json: dict):
     self.id = int(json['id'])
@@ -121,7 +121,7 @@ class PartialBot(BotStats):
 
   @property
   def created_at(self) -> datetime:
-    """The date when this bot was created."""
+    """When this bot was created."""
 
     return datetime.fromtimestamp(
       ((self.id >> 22) + 1420070400000) // 1000, tz=timezone.utc
@@ -129,7 +129,7 @@ class PartialBot(BotStats):
 
 
 class Bot(PartialBot):
-  """A detailed information of a ranked bot."""
+  """A detailed information of a Discord bot."""
 
   __slots__: Tuple[str, ...] = (
     'owners',
@@ -149,37 +149,37 @@ class Bot(PartialBot):
   )
 
   owners: List[int]
-  """A list of this bot's owner IDs."""
+  """This bot's owner IDs."""
 
   tags: List[str]
-  """A list of this bot's tags."""
+  """This bot's tags."""
 
   is_deleted: bool
   """Whether this bot is deleted or not."""
 
   avatar: str
-  """This bot's avatar URL. Its format will either be PNG or GIF if animated."""
+  """This bot's avatar URL."""
 
   short_description: str
-  """The short description of this bot."""
+  """This bot's short description."""
 
   prefix: str
-  """The prefix of this bot."""
+  """This bot's prefix."""
 
   website: str
-  """The website URL of this bot."""
+  """This bot's website URL."""
 
   approved_at: datetime
-  """The date when this bot was approved on Top.gg."""
+  """When this bot was approved on Top.gg."""
 
   timestamp: datetime
-  """The date when this bot was last updated by topstats.gg."""
+  """When this bot was updated by topstats.gg."""
 
   daily_difference: Optional[float]
-  """Difference percentage from the previous day. This can be :py:obj:`None`."""
+  """Difference percentage from the previous day."""
 
   monthly_difference: Optional[float]
-  """Difference percentage from the previous month. This can be :py:obj:`None`."""
+  """Difference percentage from the previous month."""
 
   def __init__(self, json: dict):
     self.owners = [int(i) for i in (json.get('owners') or ())]
@@ -205,17 +205,6 @@ class Bot(PartialBot):
       self.daily_difference = None
       self.monthly_difference = None
 
-    snowflake = int(json['id'])
-
-    if avatar := json.get('avatar'):
-      ext = 'gif' if avatar.startswith('a_') else 'png'
-
-      self.avatar = (
-        f'https://cdn.discordapp.com/avatars/{snowflake}/{avatar}.{ext}?size=1024'
-      )
-    else:
-      self.avatar = (
-        f'https://cdn.discordapp.com/embed/avatars/{(snowflake >> 22) % 6}.png'
-      )
+    self.avatar = json['avatar']
 
     super().__init__(json)

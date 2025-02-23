@@ -23,8 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from datetime import datetime
 from typing import Tuple, Union, Optional
+from datetime import datetime
 from enum import Enum
 
 
@@ -68,10 +68,10 @@ class Ranked(DataPoint):
   __slots__: Tuple[str, ...] = ('rank', 'difference')
 
   rank: Optional[int]
-  """This data point's rank compared to others. This can be :py:obj:`None`."""
+  """This data point's rank compared to others."""
 
   difference: Optional[int]
-  """This data point's change difference compared to its previous data point. This can be :py:obj:`None`."""
+  """This data point's change difference compared to its previous data point."""
 
   def __init__(self, json: dict, key: str):
     self.rank = json.get(f'{key}_rank')
@@ -89,7 +89,7 @@ class Timestamped(DataPoint):
   __slots__: Tuple[str, ...] = ('timestamp',)
 
   timestamp: datetime
-  """Dated timestamp of this data point."""
+  """When this data point was retrieved."""
 
   def __init__(self, json: dict, key: str):
     self.timestamp = datetime.fromisoformat(json['time'].replace('Z', '+00:00'))
@@ -127,21 +127,22 @@ class Period(Enum):
 
 
 class SortBy:
-  """The requested sorting method for sorting ranked bots."""
+  """The requested sorting method for sorting Discord bots."""
 
-  __slots__: Tuple[str, ...] = ('q',)
+  __slots__: Tuple[str, ...] = ('__by', '__method')
 
   def __init__(
     self,
     sort_by: str,
     ascending: bool,
   ):
-    self.q = f'sortBy={sort_by}_rank&sortMethod={"a" if ascending else "de"}sc'
+    self.__by = f'{sort_by}_rank'
+    self.__method = f'{"a" if ascending else "de"}sc'
 
   @staticmethod
   def monthly_votes(*, ascending: bool = False) -> 'SortBy':
     """
-    Sorts ranked bots by their monthly votes.
+    Sorts Discord bots by their monthly vote count.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
     :type ascending: :py:class:`bool`
@@ -152,7 +153,7 @@ class SortBy:
   @staticmethod
   def total_votes(*, ascending: bool = False) -> 'SortBy':
     """
-    Sorts ranked bots by their total votes.
+    Sorts Discord bots by their total vote count.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
     :type ascending: :py:class:`bool`
@@ -163,7 +164,7 @@ class SortBy:
   @staticmethod
   def server_count(*, ascending: bool = False) -> 'SortBy':
     """
-    Sorts ranked bots by their server count.
+    Sorts Discord bots by their server count.
 
     :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
     :type ascending: :py:class:`bool`
