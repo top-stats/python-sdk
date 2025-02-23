@@ -130,10 +130,9 @@ class Client:
           params=params,
         ) as resp:
           status = resp.status
-          json = await resp.json()
+          retry_after = float(json.get('expiresIn', 0)) / 1000.0
 
-          if retry_after_ms := json.get('expiresIn'):
-            retry_after = retry_after_ms / 1000
+          json = await resp.json()
 
           resp.raise_for_status()
 
