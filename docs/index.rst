@@ -29,39 +29,42 @@ Example
 
 .. code-block:: python
 
-  # import the module
+  # Import the module.
   import topstats
   
   import asyncio
   import os
   
+
   async def main() -> None:
-    # declare the client. to retrieve your topstats.gg token, see https://docs.topstats.gg/authentication/tokens/
-    async with topstats.Client('your topstats.gg API token') as ts:
-      # fetch a bot from its bot ID
+    
+    # Declare the client. To retrieve your topstats.gg token, see https://docs.topstats.gg/authentication/tokens/.
+    async with topstats.Client(os.getenv('TOPSTATS_TOKEN')) as ts:
+      
+      # Fetch a bot from its ID.
       bot = await ts.get_bot(432610292342587392)
       
       print(bot)
   
-      # fetch topstats.gg's top bots
+      # Fetch topstats.gg's top bots.
       bots = await ts.get_top_bots(sort_by=topstats.SortBy.server_count())
       
       for b in bots:
         print(b)
       
-      # fetch a bot's historical server count
+      # Fetch a bot's historical server count.
       sc = await ts.get_historical_bot_server_count(432610292342587392)
-
+  
       for server_count in sc:
         print(server_count)
       
-      # compare two bots' historical server count
+      # Compare two bots' historical server count.
       vs = await ts.compare_bot_server_count(432610292342587392, 437808476106784770)
   
       for first, second in vs:
         print(first, second)
       
-      # compare up to four bots' historical total vote count
+      # Compare up to four bots' historical total vote count.
       vs2 = await ts.compare_bot_total_votes(
         topstats.Period.LAST_YEAR,
         339254240012664832,
@@ -74,8 +77,9 @@ Example
         print(first, second, third, fourth)
   
   if __name__ == '__main__':
-    # see https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
-    # for more details
+    
+    # See https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
+    # for more details.
     if os.name == 'nt':
       asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     

@@ -31,6 +31,8 @@ from time import time
 
 
 class Ratelimiter:
+  """Handles ratelimits for a specific endpoint."""
+
   __slots__: Tuple[str, ...] = ('__lock', '__max_calls', '__period', '__calls')
 
   def __init__(
@@ -44,6 +46,8 @@ class Ratelimiter:
     self.__lock = Lock()
 
   async def __aenter__(self) -> 'Ratelimiter':
+    """Delays the request to this endpoint if it could lead to a ratelimit."""
+
     async with self.__lock:
       if len(self.__calls) >= self.__max_calls:
         until = time() + self.__period - self._timespan
@@ -59,8 +63,9 @@ class Ratelimiter:
     _exc_val: BaseException,
     _exc_tb: TracebackType,
   ) -> None:
+    """Stores the previous request's timestamp."""
+
     async with self.__lock:
-      # Store the last operation timestamp.
       self.__calls.append(time())
 
       while self._timespan >= self.__period:
@@ -68,4 +73,6 @@ class Ratelimiter:
 
   @property
   def _timespan(self) -> float:
+    """The timespan between the first call and last call."""
+
     return self.__calls[-1] - self.__calls[0]

@@ -158,7 +158,7 @@ class Bot(PartialBot):
   """Whether this bot is deleted or not."""
 
   avatar: str
-  """This bot's avatar URL. Its format will either be PNG or GIF if animated."""
+  """This bot's avatar URL."""
 
   short_description: str
   """This bot's short description."""
@@ -176,10 +176,10 @@ class Bot(PartialBot):
   """When this bot was updated by topstats.gg."""
 
   daily_difference: Optional[float]
-  """Difference percentage from the previous day. This can be :py:obj:`None`."""
+  """Difference percentage from the previous day."""
 
   monthly_difference: Optional[float]
-  """Difference percentage from the previous month. This can be :py:obj:`None`."""
+  """Difference percentage from the previous month."""
 
   def __init__(self, json: dict):
     self.owners = [int(i) for i in (json.get('owners') or ())]
@@ -205,17 +205,6 @@ class Bot(PartialBot):
       self.daily_difference = None
       self.monthly_difference = None
 
-    snowflake = int(json['id'])
-
-    if avatar := json.get('avatar'):
-      ext = 'gif' if avatar.startswith('a_') else 'png'
-
-      self.avatar = (
-        f'https://cdn.discordapp.com/avatars/{snowflake}/{avatar}.{ext}?size=1024'
-      )
-    else:
-      self.avatar = (
-        f'https://cdn.discordapp.com/embed/avatars/{(snowflake >> 22) % 6}.png'
-      )
+    self.avatar = json['avatar']
 
     super().__init__(json)

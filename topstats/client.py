@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Iterable, Optional, Tuple, Union, Any, Dict
+from typing import Iterable, Optional, Tuple, Union, Dict
 from aiohttp import ClientSession, ClientTimeout
 from collections import namedtuple
 from asyncio import sleep
@@ -48,7 +48,7 @@ class Client:
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: Optional[:class:`~aiohttp.ClientSession`]
 
-  :exception TypeError: If ``token`` is not a :py:class:`str`.
+  :exception TypeError: If ``token`` is not a :py:class:`str` or is empty.
   """
 
   __slots__: Tuple[str, ...] = (
@@ -93,9 +93,8 @@ class Client:
   async def __get(
     self,
     path: str,
-    default_value: Optional[Any] = None,
     **params: Dict[str, Union[str, int]],
-  ) -> Union[Dict[str, Any], Optional[Any]]:
+  ) -> Optional[dict]:
     if self.__session.closed:
       raise Error('Client session is already closed.')
 
@@ -114,9 +113,14 @@ class Client:
 
     ratelimiter = getattr(self.__ratelimiters, ratelimiter_key)
 
+    kwargs = {}
+
+    if params:
+      kwargs['params'] = params
+
     status = None
     retry_after = None
-    json = {}
+    json = None
 
     async with ratelimiter:
       try:
@@ -127,19 +131,22 @@ class Client:
             'Content-Type': 'application/json',
             'User-Agent': 'topstats (https://github.com/top-stats/python-sdk 1.1.1) Python/',
           },
-          params=params,
+          **kwargs,
         ) as resp:
           status = resp.status
           retry_after = float(json.get('expiresIn', 0)) / 1000.0
 
-          json = await resp.json()
+          try:
+            json = await resp.json()
+          except:
+            pass
 
           resp.raise_for_status()
 
           return json
       except:
         if status == 404:
-          return default_value
+          return
         elif status == 429 and retry_after is not None:
           if retry_after > MAXIMUM_DELAY_THRESHOLD:
             setattr(self.__current_ratelimits, ratelimiter_key, time() + retry_after)
@@ -148,7 +155,7 @@ class Client:
 
           await sleep(retry_after)
 
-          return await self.__get(path, default_value=default_value, **params)
+          return await self.__get(path, **params)
 
         raise RequestError(json.get('message'), status) from None
 
@@ -178,6 +185,7 @@ class Client:
     """
 
     b = await self.__get(f'/bots/{id}')
+
     return b and Bot(b)
 
   async def compare_bots(self, *ids: int) -> Optional[Iterable[Bot]]:
@@ -197,6 +205,7 @@ class Client:
     """
 
     c = await self.__get(f'/compare/{"/".join(Client.__validate_ids(*ids))}')
+
     return c and map(Bot, c['data'])
 
   async def get_users_bot(self, id: int) -> Iterable[Bot]:
@@ -216,7 +225,8 @@ class Client:
     :rtype: Iterable[:class:`.Bot`]
     """
 
-    b = await self.__get(f'/users/{id}/bots', default_value={})
+    b = (await self.__get(f'/users/{id}/bots')) or {}
+
     return map(Bot, b.get('bots', ()))
 
   async def __get_historical_bot_stats(
@@ -244,9 +254,8 @@ class Client:
     c = await self.__get(
       f'/compare/historical/{"/".join(ids)}', timeFrame=period.value, type=kind
     )
-    d = c['data']
 
-    return c and zip(*((Timestamped(t, kind) for t in d[i]) for i in ids))
+    return c and zip(*((Timestamped(t, kind) for t in c['data'][i]) for i in ids))
 
   async def get_historical_bot_monthly_votes(
     self, id: int, period: Optional[Period] = None
@@ -393,13 +402,14 @@ class Client:
     """
 
     g = await self.__get(f'/bots/{id}/recent')
+
     return g and RecentBotStats(g)
 
   async def get_top_bots(
     self, sort_by: SortBy, *, limit: Optional[int] = None
   ) -> Iterable[PartialBot]:
     """
-    Fetches and yields a list of top bots based on a certain criteria.
+    Fetches and yields top Discord bots based on a certain criteria.
 
     :param sort_by: The requested criteria and sorting method.
     :type sort_by: :class:`.SortBy`
@@ -418,13 +428,15 @@ class Client:
     if not isinstance(sort_by, SortBy):
       raise TypeError('The requested sorting criteria is of invalid type.')
 
-    t = await self.__get(
-      '/rankings/bots',
-      default_value={},
-      limit=max(min(limit or 100, 500), 1),
-      sortBy=sort_by._SortBy__by,
-      sortMethod=sort_by._SortBy__method,
-    )
+    t = (
+      await self.__get(
+        '/rankings/bots',
+        limit=max(min(limit or 100, 500), 1),
+        sortBy=sort_by._SortBy__by,
+        sortMethod=sort_by._SortBy__method,
+      )
+    ) or {}
+
     return map(PartialBot, t.get('data', ()))
 
   async def close(self) -> None:

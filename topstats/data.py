@@ -68,10 +68,10 @@ class Ranked(DataPoint):
   __slots__: Tuple[str, ...] = ('rank', 'difference')
 
   rank: Optional[int]
-  """This data point's rank compared to others. This can be :py:obj:`None`."""
+  """This data point's rank compared to others."""
 
   difference: Optional[int]
-  """This data point's change difference compared to its previous data point. This can be :py:obj:`None`."""
+  """This data point's change difference compared to its previous data point."""
 
   def __init__(self, json: dict, key: str):
     self.rank = json.get(f'{key}_rank')
