@@ -119,7 +119,7 @@ class Client:
       kwargs['params'] = params
 
     status = None
-    retry_after = None
+    retry_after = 0.0
     json = None
 
     async with ratelimiter:
@@ -134,10 +134,10 @@ class Client:
           **kwargs,
         ) as resp:
           status = resp.status
-          retry_after = float(json.get('expiresIn', 0)) / 1000.0
 
           try:
             json = await resp.json()
+            retry_after = float(json.get('expiresIn', 0)) / 1000.0
           except:
             pass
 
