@@ -32,6 +32,7 @@ from .bot import (
 )
 from .errors import Error, RequestError, Ratelimited
 from .data import Period, SortBy, Timestamped
+from .version import VERSION
 from .client import Client
 
 
@@ -39,7 +40,7 @@ __title__ = 'topstats'
 __author__ = 'null8626'
 __license__ = 'MIT'
 __copyright__ = 'Copyright (c) 2020 Arthurdw; Copyright (c) 2024-2025 null8626'
-__version__ = '1.1.1'
+__version__ = VERSION
 __all__ = (
   'Bot',
   'Client',

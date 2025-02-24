@@ -35,6 +35,7 @@ from .errors import Error, RequestError, Ratelimited
 from .bot import Bot, PartialBot, RecentBotStats
 from .data import Period, SortBy, Timestamped
 from .ratelimiter import Ratelimiter
+from .version import VERSION
 
 
 BASE_URL = 'https://api.topstats.gg/discord'
@@ -131,7 +132,7 @@ class Client:
           headers={
             'Authorization': self.__token,
             'Content-Type': 'application/json',
-            'User-Agent': 'topstats (https://github.com/top-stats/python-sdk 1.1.1) Python/',
+            'User-Agent': f'topstats (https://github.com/top-stats/python-sdk {VERSION}) Python/',
           },
           **kwargs,
         ) as resp:
