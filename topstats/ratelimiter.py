@@ -23,17 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from asyncio import Lock, sleep
 from types import TracebackType
-from typing import Type, Tuple
 from collections import deque
 from time import time
+import asyncio
 
 
 class Ratelimiter:
   """Handles ratelimits for a specific endpoint."""
 
-  __slots__: Tuple[str, ...] = ('__lock', '__max_calls', '__period', '__calls')
+  __slots__: tuple[str, ...] = ('__lock', '__max_calls', '__period', '__calls')
 
   def __init__(
     self,
@@ -43,7 +42,7 @@ class Ratelimiter:
     self.__calls = deque()
     self.__period = period
     self.__max_calls = max_calls
-    self.__lock = Lock()
+    self.__lock = asyncio.Lock()
 
   async def __aenter__(self) -> 'Ratelimiter':
     """Delays the request to this endpoint if it could lead to a ratelimit."""
@@ -53,13 +52,13 @@ class Ratelimiter:
         until = time() + self.__period - self._timespan
 
         if (sleep_time := until - time()) > 0:
-          await sleep(sleep_time)
+          await asyncio.sleep(sleep_time)
 
       return self
 
   async def __aexit__(
     self,
-    _exc_type: Type[BaseException],
+    _exc_type: type[BaseException],
     _exc_val: BaseException,
     _exc_tb: TracebackType,
   ) -> None:

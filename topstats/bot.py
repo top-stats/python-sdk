@@ -23,14 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import List, Optional, Tuple, Union
 from datetime import datetime, timezone
+from typing import Optional, Union
 
 from .data import Ranked
 
 
 class BotStats:
-  __slots__: Tuple[str, ...] = (
+  __slots__: tuple[str, ...] = (
     'monthly_votes',
     'total_votes',
     'server_count',
@@ -54,7 +54,7 @@ class BotStats:
 class TimestampedBotStats(BotStats):
   """A Discord bot's timestamped stats. This class contains several data points and their dated timestamps."""
 
-  __slots__: Tuple[str, ...] = ('timestamp',)
+  __slots__: tuple[str, ...] = ('timestamp',)
 
   timestamp: datetime
   """When this stats was retrieved."""
@@ -71,15 +71,15 @@ class TimestampedBotStats(BotStats):
 class RecentBotStats:
   """A Discord bot's recent stats for the past 30 hours and past month."""
 
-  __slots__: Tuple[str, ...] = (
+  __slots__: tuple[str, ...] = (
     'hourly',
     'daily',
   )
 
-  hourly: List[TimestampedBotStats]
+  hourly: list[TimestampedBotStats]
   """This bot's stats for the past 30 hours."""
 
-  daily: List[TimestampedBotStats]
+  daily: list[TimestampedBotStats]
   """This bot's stats for the past month."""
 
   def __init__(self, json: dict):
@@ -93,7 +93,7 @@ class RecentBotStats:
 class PartialBot(BotStats):
   """A brief information of a Discord bot."""
 
-  __slots__: Tuple[str, ...] = ('id', 'name')
+  __slots__: tuple[str, ...] = ('id', 'name')
 
   id: int
   """This bot's ID."""
@@ -131,7 +131,7 @@ class PartialBot(BotStats):
 class Bot(PartialBot):
   """A detailed information of a Discord bot."""
 
-  __slots__: Tuple[str, ...] = (
+  __slots__: tuple[str, ...] = (
     'owners',
     'tags',
     'is_deleted',
@@ -148,10 +148,10 @@ class Bot(PartialBot):
     'monthly_difference',
   )
 
-  owners: List[int]
+  owners: list[int]
   """This bot's owner IDs."""
 
-  tags: List[str]
+  tags: list[str]
   """This bot's tags."""
 
   is_deleted: bool

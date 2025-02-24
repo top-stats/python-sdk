@@ -23,8 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Iterable, Optional, Tuple, Union, Dict
 from aiohttp import ClientSession, ClientTimeout
+from collections.abc import Iterable
+from typing import Optional, Union
 from collections import namedtuple
 from asyncio import sleep
 from time import time
@@ -34,6 +35,7 @@ from .errors import Error, RequestError, Ratelimited
 from .bot import Bot, PartialBot, RecentBotStats
 from .data import Period, SortBy, Timestamped
 from .ratelimiter import Ratelimiter
+
 
 BASE_URL = 'https://api.topstats.gg/discord'
 MAXIMUM_DELAY_THRESHOLD = 5.0
@@ -51,7 +53,7 @@ class Client:
   :exception TypeError: If ``token`` is not a :py:class:`str` or is empty.
   """
 
-  __slots__: Tuple[str, ...] = (
+  __slots__: tuple[str, ...] = (
     '__own_session',
     '__session',
     '__token',
@@ -93,7 +95,7 @@ class Client:
   async def __get(
     self,
     path: str,
-    **params: Dict[str, Union[str, int]],
+    **params: dict[str, Union[str, int]],
   ) -> Optional[dict]:
     if self.__session.closed:
       raise Error('Client session is already closed.')
@@ -243,7 +245,7 @@ class Client:
 
   async def __compare_historical_bot_stats(
     self, kind: str, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
+  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
     if not isinstance(period, Period):
       if isinstance(period, int):
         ids = period, *ids
@@ -280,7 +282,7 @@ class Client:
 
   async def compare_bot_monthly_votes(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
+  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
     """
     Fetches and yields several Discord bots' historical monthly vote count for a certain period of time.
 
@@ -295,7 +297,7 @@ class Client:
     :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
 
     :returns: The requested list of monthly vote counts to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
+    :rtype: Optional[Iterable[tuple[:class:`.Timestamped`, ...]]]
     """
 
     return await self.__compare_historical_bot_stats('monthly_votes', period, *ids)
@@ -323,7 +325,7 @@ class Client:
 
   async def compare_bot_total_votes(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
+  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
     """
     Fetches and yields several Discord bots' historical total vote count for a certain period of time.
 
@@ -338,7 +340,7 @@ class Client:
     :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
 
     :returns: The requested list of total vote counts to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
+    :rtype: Optional[Iterable[tuple[:class:`.Timestamped`, ...]]]
     """
 
     return await self.__compare_historical_bot_stats('total_votes', period, *ids)
@@ -366,7 +368,7 @@ class Client:
 
   async def compare_bot_server_count(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[Tuple[Timestamped, ...]]]:
+  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
     """
     Fetches and yields several Discord bots' historical server count for a certain period of time.
 
@@ -381,7 +383,7 @@ class Client:
     :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
 
     :returns: The requested list of server counts to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[Tuple[:class:`.Timestamped`, ...]]]
+    :rtype: Optional[Iterable[tuple[:class:`.Timestamped`, ...]]]
     """
 
     return await self.__compare_historical_bot_stats('server_count', period, *ids)

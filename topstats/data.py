@@ -23,13 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Tuple, Union, Optional
+from typing import Union, Optional
 from datetime import datetime
 from enum import Enum
 
 
 class DataPoint:
-  __slots__: Tuple[str, ...] = ('value',)
+  __slots__: tuple[str, ...] = ('value',)
 
   value: int
   """This data point's value."""
@@ -65,7 +65,7 @@ class DataPoint:
 class Ranked(DataPoint):
   """A ranked data point. This class contains a value and its rank compared to others and/or difference compared to its previous data point."""
 
-  __slots__: Tuple[str, ...] = ('rank', 'difference')
+  __slots__: tuple[str, ...] = ('rank', 'difference')
 
   rank: Optional[int]
   """This data point's rank compared to others."""
@@ -86,7 +86,7 @@ class Ranked(DataPoint):
 class Timestamped(DataPoint):
   """A timestamped data point. This class contains a value and its dated timestamp."""
 
-  __slots__: Tuple[str, ...] = ('timestamp',)
+  __slots__: tuple[str, ...] = ('timestamp',)
 
   timestamp: datetime
   """When this data point was retrieved."""
@@ -103,7 +103,7 @@ class Timestamped(DataPoint):
 class Period(Enum):
   """The requested time period for fetching historical bot stats."""
 
-  __slots__: Tuple[str, ...] = ()
+  __slots__: tuple[str, ...] = ()
 
   ALL_TIME = 'alltime'
   LAST_5_YEARS = '5y'
@@ -129,7 +129,7 @@ class Period(Enum):
 class SortBy:
   """The requested sorting method for sorting Discord bots."""
 
-  __slots__: Tuple[str, ...] = ('__by', '__method')
+  __slots__: tuple[str, ...] = ('__by', '__method')
 
   def __init__(
     self,
