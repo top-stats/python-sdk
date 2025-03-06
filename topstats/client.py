@@ -51,7 +51,7 @@ class Client:
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: Optional[:class:`~aiohttp.ClientSession`]
 
-  :exception TypeError: If ``token`` is not a :py:class:`str` or is empty.
+  :exception TypeError: ``token`` is not a :py:class:`str` or is empty.
   """
 
   __slots__: tuple[str, ...] = (
