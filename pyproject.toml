@@ -4,7 +4,7 @@ requires = ["setuptools"]
 [project]
 name = "topstats"
 version = "1.1.1"
-description = "The community-maintained Python API wrapper for topstats.gg."
+description = "A simple API wrapper for topstats.gg written in Python."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "null8626" }]

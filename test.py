@@ -49,16 +49,22 @@ async def run() -> None:
     for b in bots:
       test_attributes(b)
 
-    sc = await ts.get_historical_bot_server_count(432610292342587392)
+    types = ('monthly_votes', 'server_count', 'total_votes')
 
-    for server_count in sc:
-      test_attributes(server_count)
+    for ty in types:
+      historical = await getattr(ts, f'get_historical_bot_{ty}')(432610292342587392)
 
-    vs = await ts.compare_bot_server_count(432610292342587392, 437808476106784770)
+      for element in historical:
+        test_attributes(element)
 
-    for first, second in vs:
-      test_attributes(first)
-      test_attributes(second)
+    for ty in types:
+      vs = await getattr(ts, f'compare_bot_{ty}')(
+        432610292342587392, 437808476106784770
+      )
+
+      for first, second in vs:
+        test_attributes(first)
+        test_attributes(second)
 
     vs2 = await ts.compare_bot_total_votes(
       topstats.Period.LAST_YEAR,

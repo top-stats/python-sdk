@@ -15,17 +15,21 @@ topstats_
 .. |downloads| image:: https://img.shields.io/pypi/dm/topstats?style=flat-square
 .. _downloads: https://pypi.org/project/topstats/
 
-The community-maintained Python API wrapper for `topstats.gg <https://topstats.gg/>`_.
+A simple API wrapper for `topstats.gg <https://topstats.gg/>`_ written in Python.
 
-Installation
-------------
+Getting started
+---------------
+
+Make sure you already have an API token handy. See `this page <https://docs.topstats.gg/authentication/tokens>_` on how to retrieve it.
+
+After that, run the following command in your terminal:
 
 .. code-block:: console
 
   $ pip install topstats
 
-Example
--------
+Examples
+--------
 
 .. code-block:: python
 
