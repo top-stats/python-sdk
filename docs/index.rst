@@ -42,7 +42,7 @@ Examples
 
   async def main() -> None:
     
-    # Declare the client. To retrieve your topstats.gg token, see https://docs.topstats.gg/authentication/tokens/.
+    # Declare the client.
     async with topstats.Client(os.getenv('TOPSTATS_TOKEN')) as ts:
       
       # Fetch a bot from its ID.
