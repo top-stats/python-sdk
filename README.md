@@ -13,7 +13,7 @@ Make sure you already have an API token handy. See [this page](https://docs.tops
 After that, run the following command in your terminal:
 
 ```console
-pip install topstats
+$ pip install topstats
 ```
 
 ## Example
