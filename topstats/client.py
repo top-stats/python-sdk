@@ -44,9 +44,9 @@ MAXIMUM_DELAY_THRESHOLD = 5.0
 
 class Client:
   """
-  The class that lets you interact with the API.
+  Interact with the API's endpoints.
 
-  :param token: The API token to use with the API. To retrieve your topstats.gg API token, see https://docs.topstats.gg/authentication/tokens/.
+  :param token: The API token to use. To retrieve it, see https://docs.topstats.gg/authentication/tokens/.
   :type token: :py:class:`str`
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: Optional[:class:`~aiohttp.ClientSession`]
@@ -97,7 +97,7 @@ class Client:
     self,
     path: str,
     **params: dict[str, Union[str, int]],
-  ) -> Optional[dict]:
+  ) -> dict:
     if self.__session.closed:
       raise Error('Client session is already closed.')
 
@@ -148,9 +148,7 @@ class Client:
 
           return json
       except:
-        if status == 404:
-          return
-        elif status == 429 and retry_after is not None:
+        if status == 429 and retry_after is not None:
           if retry_after > MAXIMUM_DELAY_THRESHOLD:
             setattr(self.__current_ratelimits, ratelimiter_key, time() + retry_after)
 
@@ -172,44 +170,42 @@ class Client:
 
     return map(str, ids)
 
-  async def get_bot(self, id: int) -> Optional[Bot]:
+  async def get_bot(self, id: int) -> Bot:
     """
     Fetches a Discord bot from its ID.
 
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
 
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception Error: The client is already closed.
+    :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested bot. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[:class:`.Bot`]
+    :returns: The requested bot.
+    :rtype: :class:`.Bot`
     """
 
-    b = await self.__get(f'/bots/{id}')
+    return Bot(await self.__get(f'/bots/{id}'))
 
-    return b and Bot(b)
-
-  async def compare_bots(self, *ids: int) -> Optional[Iterable[Bot]]:
+  async def compare_bots(self, *ids: int) -> Iterable[Bot]:
     """
     Fetches and yields several Discord bots from a set of IDs.
 
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
-    :exception IndexError: If the amount of IDs provided are not within range.
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception IndexError: The amount of IDs provided are not within range.
+    :exception Error: The client is already closed.
+    :exception RequestError: One of the specified bots do not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested list of bots to compare. This can be :py:obj:`None` if they do not exist.
-    :rtype: Optional[Iterable[:class:`.Bot`]]
+    :returns: The requested list of bots to compare.
+    :rtype: Iterable[:class:`.Bot`]
     """
 
     c = await self.__get(f'/compare/{"/".join(Client.__validate_ids(*ids))}')
 
-    return c and map(Bot, c['data'])
+    return map(Bot, c['data'])
 
   async def get_users_bot(self, id: int) -> Iterable[Bot]:
     """
@@ -220,21 +216,21 @@ class Client:
     :param id: The requested user's ID.
     :type id: :py:class:`int`
 
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception Error: The client is already closed.
+    :exception RequestError: The specified user has not logged in to Top.gg or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
     :returns: The requested list of bots made by this user.
     :rtype: Iterable[:class:`.Bot`]
     """
 
-    b = (await self.__get(f'/users/{id}/bots')) or {}
+    b = await self.__get(f'/users/{id}/bots')
 
     return map(Bot, b.get('bots', ()))
 
   async def __get_historical_bot_stats(
     self, kind: str, id: int, period: Optional[Period]
-  ) -> Optional[Iterable[Timestamped]]:
+  ) -> Iterable[Timestamped]:
     if not isinstance(period, Period):
       period = Period.ALL_TIME
 
@@ -242,11 +238,11 @@ class Client:
       f'/bots/{id}/historical', timeFrame=period.value, type=kind
     )
 
-    return response and (Timestamped(data, kind) for data in response['data'])
+    return (Timestamped(data, kind) for data in response['data'])
 
   async def __compare_historical_bot_stats(
     self, kind: str, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
+  ) -> Iterable[tuple[Timestamped, ...]]:
     if not isinstance(period, Period):
       if isinstance(period, int):
         ids = period, *ids
@@ -258,11 +254,11 @@ class Client:
       f'/compare/historical/{"/".join(ids)}', timeFrame=period.value, type=kind
     )
 
-    return c and zip(*((Timestamped(t, kind) for t in c['data'][i]) for i in ids))
+    return zip(*((Timestamped(t, kind) for t in c['data'][i]) for i in ids))
 
   async def get_historical_bot_monthly_votes(
     self, id: int, period: Optional[Period] = None
-  ) -> Optional[Iterable[Timestamped]]:
+  ) -> Iterable[Timestamped]:
     """
     Fetches and yields a Discord bot's historical monthly vote count for a certain period of time.
 
@@ -271,19 +267,19 @@ class Client:
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
     :type period: Optional[:class:`.Period`]
 
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception Error: The client is already closed.
+    :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested list of this bot's monthly vote counts. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[:class:`.Timestamped`]]
+    :returns: The requested list of this bot's monthly vote counts.
+    :rtype: Iterable[:class:`.Timestamped`]
     """
 
     return await self.__get_historical_bot_stats('monthly_votes', id, period)
 
   async def compare_bot_monthly_votes(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
+  ) -> Iterable[tuple[Timestamped, ...]]:
     """
     Fetches and yields several Discord bots' historical monthly vote count for a certain period of time.
 
@@ -292,20 +288,20 @@ class Client:
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
-    :exception IndexError: If the amount of IDs provided are not within range.
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception IndexError: The amount of IDs provided are not within range.
+    :exception Error: The client is already closed.
+    :exception RequestError: One of the specified bots do not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested list of monthly vote counts to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[tuple[:class:`.Timestamped`, ...]]]
+    :returns: The requested list of monthly vote counts to compare.
+    :rtype: Iterable[tuple[:class:`.Timestamped`, ...]]
     """
 
     return await self.__compare_historical_bot_stats('monthly_votes', period, *ids)
 
   async def get_historical_bot_total_votes(
     self, id: int, period: Optional[Period] = None
-  ) -> Optional[Iterable[Timestamped]]:
+  ) -> Iterable[Timestamped]:
     """
     Fetches and yields a Discord bot's historical total vote count for a certain period of time.
 
@@ -314,19 +310,19 @@ class Client:
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
     :type period: Optional[:class:`.Period`]
 
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception Error: The client is already closed.
+    :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested list of this bot's total vote counts. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[:class:`.Timestamped`]]
+    :returns: The requested list of this bot's total vote counts.
+    :rtype: Iterable[:class:`.Timestamped`]
     """
 
     return await self.__get_historical_bot_stats('total_votes', id, period)
 
   async def compare_bot_total_votes(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
+  ) -> Iterable[tuple[Timestamped, ...]]:
     """
     Fetches and yields several Discord bots' historical total vote count for a certain period of time.
 
@@ -335,20 +331,20 @@ class Client:
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
-    :exception IndexError: If the amount of IDs provided are not within range.
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception IndexError: The amount of IDs provided are not within range.
+    :exception Error: The client is already closed.
+    :exception RequestError: One of the specified bots do not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested list of total vote counts to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[tuple[:class:`.Timestamped`, ...]]]
+    :returns: The requested list of total vote counts to compare.
+    :rtype: Iterable[tuple[:class:`.Timestamped`, ...]]
     """
 
     return await self.__compare_historical_bot_stats('total_votes', period, *ids)
 
   async def get_historical_bot_server_count(
     self, id: int, period: Optional[Period] = None
-  ) -> Optional[Iterable[Timestamped]]:
+  ) -> Iterable[Timestamped]:
     """
     Fetches and yields a Discord bot's historical server count for a certain period of time.
 
@@ -357,19 +353,19 @@ class Client:
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
     :type period: Optional[:class:`.Period`]
 
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception Error: The client is already closed.
+    :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested list of this bot's server counts. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[:class:`.Timestamped`]]
+    :returns: The requested list of this bot's server counts.
+    :rtype: Iterable[:class:`.Timestamped`]
     """
 
     return await self.__get_historical_bot_stats('server_count', id, period)
 
   async def compare_bot_server_count(
     self, period: Optional[Union[Period, int]], *ids: int
-  ) -> Optional[Iterable[tuple[Timestamped, ...]]]:
+  ) -> Iterable[tuple[Timestamped, ...]]:
     """
     Fetches and yields several Discord bots' historical server count for a certain period of time.
 
@@ -378,35 +374,33 @@ class Client:
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
-    :exception IndexError: If the amount of IDs provided are not within range.
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception IndexError: The amount of IDs provided are not within range.
+    :exception Error: The client is already closed.
+    :exception RequestError: One of the specified bots do not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested list of server counts to compare. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[Iterable[tuple[:class:`.Timestamped`, ...]]]
+    :returns: The requested list of server counts to compare.
+    :rtype: Iterable[tuple[:class:`.Timestamped`, ...]]
     """
 
     return await self.__compare_historical_bot_stats('server_count', period, *ids)
 
-  async def get_recent_bot_stats(self, id: int) -> Optional[RecentBotStats]:
+  async def get_recent_bot_stats(self, id: int) -> RecentBotStats:
     """
     Fetches recent stats of a Discord bot for the past 30 hours and past month.
 
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
 
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception Error: The client is already closed.
+    :exception RequestError: The client received a non-favorable response from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
-    :returns: The requested recent bot stats for the past 30 hours and past month. This can be :py:obj:`None` if it does not exist.
-    :rtype: Optional[:class:`.RecentBotStats`]
+    :returns: The requested recent bot stats for the past 30 hours and past month.
+    :rtype: :class:`.RecentBotStats`
     """
 
-    g = await self.__get(f'/bots/{id}/recent')
-
-    return g and RecentBotStats(g)
+    return RecentBotStats(await self.__get(f'/bots/{id}/recent'))
 
   async def get_top_bots(
     self, sort_by: SortBy, *, limit: Optional[int] = None
@@ -419,10 +413,10 @@ class Client:
     :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``500``.
     :type limit: Optional[:py:class:`int`]
 
-    :exception TypeError: If the requested sorting criteria is of invalid type.
-    :exception Error: If the :class:`~aiohttp.ClientSession` used by the client is already closed.
-    :exception RequestError: If the client received a non-favorable response from the API.
-    :exception Ratelimited: If the client got blocked by the API because it exceeded its ratelimits.
+    :exception TypeError: The requested sorting criteria is of invalid type.
+    :exception Error: The client is already closed.
+    :exception RequestError: The client received a non-favorable response from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
 
     :returns: The requested list of top bots based on the requested criteria.
     :rtype: Iterable[:class:`.PartialBot`]
@@ -431,14 +425,12 @@ class Client:
     if not isinstance(sort_by, SortBy):
       raise TypeError('The requested sorting criteria is of invalid type.')
 
-    t = (
-      await self.__get(
-        '/rankings/bots',
-        limit=max(min(limit or 100, 500), 1),
-        sortBy=sort_by._SortBy__by,
-        sortMethod=sort_by._SortBy__method,
-      )
-    ) or {}
+    t = await self.__get(
+      '/rankings/bots',
+      limit=max(min(limit or 100, 500), 1),
+      sortBy=sort_by._SortBy__by,
+      sortMethod=sort_by._SortBy__method,
+    )
 
     return map(PartialBot, t.get('data', ()))
 

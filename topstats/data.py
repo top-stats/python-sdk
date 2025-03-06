@@ -29,6 +29,8 @@ from enum import Enum
 
 
 class DataPoint:
+  """A data point."""
+
   __slots__: tuple[str, ...] = ('value',)
 
   value: int

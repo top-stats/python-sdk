@@ -30,6 +30,8 @@ from .data import Ranked
 
 
 class BotStats:
+  """A Discord bot's statistics."""
+
   __slots__: tuple[str, ...] = (
     'monthly_votes',
     'total_votes',
@@ -91,7 +93,7 @@ class RecentBotStats:
 
 
 class PartialBot(BotStats):
-  """A brief information of a Discord bot."""
+  """A Discord bot's brief information."""
 
   __slots__: tuple[str, ...] = ('id', 'name')
 
@@ -129,7 +131,7 @@ class PartialBot(BotStats):
 
 
 class Bot(PartialBot):
-  """A detailed information of a Discord bot."""
+  """A Discord bot's detailed information."""
 
   __slots__: tuple[str, ...] = (
     'owners',
