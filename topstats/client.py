@@ -23,13 +23,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from aiohttp import ClientSession, ClientTimeout
+from aiohttp import ClientResponseError, ClientSession, ClientTimeout
 from collections.abc import Iterable
 from typing import Optional, Union
 from collections import namedtuple
 from asyncio import sleep
 from time import time
 from re import sub
+import json
 
 from .errors import Error, RequestError, Ratelimited
 from .bot import Bot, PartialBot, RecentBotStats
@@ -123,7 +124,7 @@ class Client:
 
     status = None
     retry_after = 0.0
-    json = None
+    output = None
 
     async with ratelimiter:
       try:
@@ -139,15 +140,15 @@ class Client:
           status = resp.status
 
           try:
-            json = await resp.json()
-            retry_after = float(json.get('expiresIn', 0)) / 1000.0
-          except:
+            output = await resp.json()
+            retry_after = float(output.get('expiresIn', 0)) / 1000.0
+          except (ValueError, json.decoder.JSONDecodeError):
             pass
 
           resp.raise_for_status()
 
-          return json
-      except:
+          return output
+      except ClientResponseError:
         if status == 429 and retry_after is not None:
           if retry_after > MAXIMUM_DELAY_THRESHOLD:
             setattr(self.__current_ratelimits, ratelimiter_key, time() + retry_after)
@@ -158,7 +159,7 @@ class Client:
 
           return await self.__get(path, **params)
 
-        raise RequestError(json and json.get('message'), status) from None
+        raise RequestError(output and output.get('message'), status) from None
 
   @staticmethod
   def __validate_ids(*ids: int) -> Iterable[str]:
