@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from collections.abc import Iterable
 from types import TracebackType
 from collections import deque
 from time import time
@@ -75,3 +76,32 @@ class Ratelimiter:
     """The timespan between the first call and last call."""
 
     return self.__calls[-1] - self.__calls[0]
+
+
+class Ratelimiters:
+  """Handles ratelimits for multiple endpoints."""
+
+  __slots__: tuple[str, ...] = ('__ratelimiters',)
+
+  def __init__(self, ratelimiters: Iterable[Ratelimiter]):
+    self.__ratelimiters = ratelimiters
+
+  async def __aenter__(self) -> 'Ratelimiters':
+    """Delays the request to this endpoint if it could lead to a ratelimit."""
+
+    for manager in self.__ratelimiters:
+      await manager.__aenter__()
+
+    return self
+
+  async def __aexit__(
+    self,
+    exc_type: type[BaseException],
+    exc_val: BaseException,
+    exc_tb: TracebackType,
+  ) -> None:
+    """Stores the previous request's timestamp."""
+
+    await asyncio.gather(
+      *(manager.__aexit__(exc_type, exc_val, exc_tb) for manager in self.__ratelimiters)
+    )

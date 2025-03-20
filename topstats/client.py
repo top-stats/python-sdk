@@ -33,9 +33,9 @@ from re import sub
 import json
 
 from .errors import Error, RequestError, Ratelimited
+from .ratelimiter import Ratelimiter, Ratelimiters
 from .bot import Bot, PartialBot, RecentBotStats
 from .data import Period, SortBy, Timestamped
-from .ratelimiter import Ratelimiter
 from .version import VERSION
 
 
@@ -59,6 +59,7 @@ class Client:
     '__own_session',
     '__session',
     '__token',
+    '__global_ratelimiter',
     '__ratelimiters',
     '__current_ratelimits',
   )
@@ -78,14 +79,15 @@ class Client:
       'bots bots_historical bots_recent compare compare_historical rankings_bots users_bots',
     )
 
+    self.__global_ratelimiter = Ratelimiter(119, 60)
     self.__ratelimiters = endpoint_ratelimits(
-      bots=Ratelimiter(59, 60),
-      bots_historical=Ratelimiter(59, 60),
-      bots_recent=Ratelimiter(59, 60),
-      compare=Ratelimiter(59, 60),
-      compare_historical=Ratelimiter(59, 60),
-      rankings_bots=Ratelimiter(59, 60),
-      users_bots=Ratelimiter(59, 60),
+      bots=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      bots_historical=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      bots_recent=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      compare=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      compare_historical=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      rankings_bots=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      users_bots=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
     )
     self.__current_ratelimits = endpoint_ratelimits(
       None, None, None, None, None, None, None
