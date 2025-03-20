@@ -89,8 +89,8 @@ class Ratelimiters:
   async def __aenter__(self) -> 'Ratelimiters':
     """Delays the request to this endpoint if it could lead to a ratelimit."""
 
-    for manager in self.__ratelimiters:
-      await manager.__aenter__()
+    for ratelimiter in self.__ratelimiters:
+      await ratelimiter.__aenter__()
 
     return self
 
@@ -103,5 +103,5 @@ class Ratelimiters:
     """Stores the previous request's timestamp."""
 
     await asyncio.gather(
-      *(manager.__aexit__(exc_type, exc_val, exc_tb) for manager in self.__ratelimiters)
+      *(ratelimiter.__aexit__(exc_type, exc_val, exc_tb) for ratelimiter in self.__ratelimiters)
     )
