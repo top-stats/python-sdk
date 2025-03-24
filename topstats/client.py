@@ -388,6 +388,49 @@ class Client:
 
     return await self.__compare_historical_bot_stats('server_count', period, *ids)
 
+  async def get_historical_bot_review_count(
+    self, id: int, period: Optional[Period] = None
+  ) -> Iterable[Timestamped]:
+    """
+    Fetches and yields a Discord bot's historical review count for a certain period of time.
+
+    :param id: The requested bot's ID.
+    :type id: :py:class:`int`
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
+    :type period: Optional[:class:`.Period`]
+
+    :exception Error: The client is already closed.
+    :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
+
+    :returns: The requested list of this bot's review counts.
+    :rtype: Iterable[:class:`.Timestamped`]
+    """
+
+    return await self.__get_historical_bot_stats('review_count', id, period)
+
+  async def compare_bot_review_count(
+    self, period: Optional[Union[Period, int]], *ids: int
+  ) -> Iterable[tuple[Timestamped, ...]]:
+    """
+    Fetches and yields several Discord bots' historical review count for a certain period of time.
+
+    :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
+    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
+    :type ids: :py:class:`int`
+
+    :exception IndexError: The amount of IDs provided are not within range.
+    :exception Error: The client is already closed.
+    :exception RequestError: One of the specified bots do not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
+
+    :returns: The requested list of review counts to compare.
+    :rtype: Iterable[tuple[:class:`.Timestamped`, ...]]
+    """
+
+    return await self.__compare_historical_bot_stats('review_count', period, *ids)
+
   async def get_recent_bot_stats(self, id: int) -> RecentBotStats:
     """
     Fetches recent stats of a Discord bot for the past 30 hours and past month.

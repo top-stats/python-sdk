@@ -173,3 +173,14 @@ class SortBy:
     """
 
     return SortBy('server_count', ascending)
+
+  @staticmethod
+  def review_count(*, ascending: bool = False) -> 'SortBy':
+    """
+    Sorts Discord bots by their review count.
+
+    :param ascending: Whether to sort by ascending or not. Defaults to sort by descending.
+    :type ascending: :py:class:`bool`
+    """
+
+    return SortBy('review_count', ascending)

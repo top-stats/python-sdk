@@ -36,6 +36,7 @@ class BotStats:
     'monthly_votes',
     'total_votes',
     'server_count',
+    'review_count',
   )
 
   monthly_votes: Ranked
@@ -47,10 +48,14 @@ class BotStats:
   server_count: Ranked
   """The amount servers this bot is in."""
 
+  review_count: Ranked
+  """The amount reviews this bot has."""
+
   def __init__(self, json: dict):
     self.monthly_votes = Ranked(json, 'monthly_votes')
     self.total_votes = Ranked(json, 'total_votes')
     self.server_count = Ranked(json, 'server_count')
+    self.review_count = Ranked(json, 'review_count')
 
 
 class TimestampedBotStats(BotStats):
@@ -67,7 +72,7 @@ class TimestampedBotStats(BotStats):
     super().__init__(json)
 
   def __repr__(self) -> str:
-    return f'<{__class__.__name__} monthly_votes={self.monthly_votes!r} total_votes={self.total_votes!r} server_count={self.server_count!r} timestamp={self.timestamp!r}>'
+    return f'<{__class__.__name__} monthly_votes={self.monthly_votes!r} total_votes={self.total_votes!r} server_count={self.server_count!r} review_count={self.review_count!r} timestamp={self.timestamp!r}>'
 
 
 class RecentBotStats:
@@ -110,7 +115,7 @@ class PartialBot(BotStats):
     super().__init__(json)
 
   def __repr__(self) -> str:
-    return f'<{self.__class__.__name__} id={self.id} name={self.name!r} monthly_votes={self.monthly_votes!r} server_count={self.server_count!r} total_votes={self.total_votes!r}>'
+    return f'<{self.__class__.__name__} id={self.id} name={self.name!r} monthly_votes={self.monthly_votes!r} server_count={self.server_count!r} review_count={self.review_count!r} total_votes={self.total_votes!r}>'
 
   def __int__(self) -> int:
     return self.id
@@ -142,9 +147,6 @@ class Bot(PartialBot):
     'prefix',
     'website',
     'approved_at',
-    'monthly_votes',
-    'server_count',
-    'total_votes',
     'timestamp',
     'daily_difference',
     'monthly_difference',

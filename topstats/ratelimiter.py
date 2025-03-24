@@ -103,5 +103,8 @@ class Ratelimiters:
     """Stores the previous request's timestamp."""
 
     await asyncio.gather(
-      *(ratelimiter.__aexit__(exc_type, exc_val, exc_tb) for ratelimiter in self.__ratelimiters)
+      *(
+        ratelimiter.__aexit__(exc_type, exc_val, exc_tb)
+        for ratelimiter in self.__ratelimiters
+      )
     )
