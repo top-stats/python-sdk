@@ -49,7 +49,7 @@ async def run() -> None:
     for b in bots:
       test_attributes(b)
 
-    types = ('monthly_votes', 'server_count', 'total_votes')
+    types = ('monthly_votes', 'server_count', 'total_votes', 'review_count')
 
     for ty in types:
       historical = await getattr(ts, f'get_historical_bot_{ty}')(432610292342587392)
