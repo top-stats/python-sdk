@@ -39,7 +39,7 @@ from .data import Period, SortBy, Timestamped
 from .version import VERSION
 
 
-BASE_URL = 'https://api.topstats.gg/discord'
+BASE_URL = 'https://api.topstats.gg'
 MAXIMUM_DELAY_THRESHOLD = 5.0
 
 
@@ -74,23 +74,37 @@ class Client:
     )
     self.__token = token
 
+    self.__global_ratelimiter = Ratelimiter(119, 60)
+
+    endpoint_ratelimits_kwargs = {
+      'search': Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      'discord_tags': Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      'discord_bots': Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      'discord_bots_historical': Ratelimiters(
+        (self.__global_ratelimiter, Ratelimiter(59, 60))
+      ),
+      'discord_bots_recent': Ratelimiters(
+        (self.__global_ratelimiter, Ratelimiter(59, 60))
+      ),
+      'discord_compare': Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
+      'discord_compare_historical': Ratelimiters(
+        (self.__global_ratelimiter, Ratelimiter(59, 60))
+      ),
+      'discord_rankings_bots': Ratelimiters(
+        (self.__global_ratelimiter, Ratelimiter(59, 60))
+      ),
+      'discord_users_bots': Ratelimiters(
+        (self.__global_ratelimiter, Ratelimiter(59, 60))
+      ),
+    }
+
     endpoint_ratelimits = namedtuple(
-      'EndpointRatelimits',
-      'bots bots_historical bots_recent compare compare_historical rankings_bots users_bots',
+      'EndpointRatelimits', ' '.join(endpoint_ratelimits_kwargs.keys())
     )
 
-    self.__global_ratelimiter = Ratelimiter(119, 60)
-    self.__ratelimiters = endpoint_ratelimits(
-      bots=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
-      bots_historical=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
-      bots_recent=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
-      compare=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
-      compare_historical=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
-      rankings_bots=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
-      users_bots=Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
-    )
+    self.__ratelimiters = endpoint_ratelimits(**endpoint_ratelimits_kwargs)
     self.__current_ratelimits = endpoint_ratelimits(
-      None, None, None, None, None, None, None
+      **{key: None for key in endpoint_ratelimits_kwargs.keys()}
     )
 
   def __repr__(self) -> str:
@@ -188,7 +202,62 @@ class Client:
     :rtype: :class:`.Bot`
     """
 
-    return Bot(await self.__get(f'/bots/{id}'))
+    return Bot(await self.__get(f'/discord/bots/{id}'))
+
+  async def search_bots(
+    self,
+    *,
+    name: Optional[str] = None,
+    tag: Optional[str] = None,
+    offset: Optional[int] = None,
+    limit: Optional[int] = None,
+    include_deleted: bool = False,
+  ) -> Bot:
+    """
+    Fetches and yields several Discord bots from their name or tag.
+
+    :param name: The requested bot name. If :py:obj:`None`, defaults to the tag parameter.
+    :type name: Optional[:py:class:`str`]
+    :param tag: The requested bot tag. If :py:obj:`None`, defaults to the name parameter.
+    :type tag: Optional[:py:class:`str`]
+    :param offset: The amount of bots to be skipped.
+    :type offset: Optional[:py:class:`int`]
+    :param limit: The maximum amount of bots to be queried. Defaults to ``50`` or ``100`` depending on the parameter. This can't exceed the default value.
+    :type limit: Optional[:py:class:`int`]
+    :param include_deleted: Whether to include deleted bots or not. Defaults to :py:obj:`False`.
+    :type include_deleted: :py:class:`bool`
+
+    :exception Error: The client is already closed or both the name and tag parameters are unspecified.
+    :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
+    :exception Ratelimited: Ratelimited from sending more requests.
+
+    :returns: The requested list of bots that matches the specified query.
+    :rtype: Iterable[:class:`.Bot`]
+    """
+
+    url = '/search'
+    query = name
+    max_limit = 100
+
+    if tag:
+      url = '/discord/tags'
+      query = tag
+      max_limit = 50
+    elif not name:
+      raise Error('Either a bot name or tag must be specified.')
+
+    return map(
+      Bot,
+      (
+        await self.__get(
+          url,
+          query=query,
+          offset=max(offset or 0, 0),
+          limit=max(min(limit or max_limit, max_limit), 1),
+          includeDeleted=str(include_deleted).lower(),
+        )
+      )['data']['results'],
+    )
 
   async def compare_bots(self, *ids: int) -> Iterable[Bot]:
     """
@@ -206,7 +275,7 @@ class Client:
     :rtype: Iterable[:class:`.Bot`]
     """
 
-    c = await self.__get(f'/compare/{"/".join(Client.__validate_ids(*ids))}')
+    c = await self.__get(f'/discord/compare/{"/".join(Client.__validate_ids(*ids))}')
 
     return map(Bot, c['data'])
 
@@ -227,7 +296,7 @@ class Client:
     :rtype: Iterable[:class:`.Bot`]
     """
 
-    b = await self.__get(f'/users/{id}/bots')
+    b = await self.__get(f'/discord/users/{id}/bots')
 
     return map(Bot, b.get('bots', ()))
 
@@ -238,7 +307,7 @@ class Client:
       period = Period.ALL_TIME
 
     response = await self.__get(
-      f'/bots/{id}/historical', timeFrame=period.value, type=kind
+      f'/discord/bots/{id}/historical', timeFrame=period.value, type=kind
     )
 
     return (Timestamped(data, kind) for data in response['data'])
@@ -254,7 +323,7 @@ class Client:
 
     ids = tuple(Client.__validate_ids(*ids))
     c = await self.__get(
-      f'/compare/historical/{"/".join(ids)}', timeFrame=period.value, type=kind
+      f'/discord/compare/historical/{"/".join(ids)}', timeFrame=period.value, type=kind
     )
 
     return zip(*((Timestamped(t, kind) for t in c['data'][i]) for i in ids))
@@ -446,7 +515,7 @@ class Client:
     :rtype: :class:`.RecentBotStats`
     """
 
-    return RecentBotStats(await self.__get(f'/bots/{id}/recent'))
+    return RecentBotStats(await self.__get(f'/discord/bots/{id}/recent'))
 
   async def get_top_bots(
     self, sort_by: SortBy, *, limit: Optional[int] = None
@@ -456,7 +525,7 @@ class Client:
 
     :param sort_by: The requested criteria and sorting method.
     :type sort_by: :class:`.SortBy`
-    :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``500``.
+    :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``100``.
     :type limit: Optional[:py:class:`int`]
 
     :exception TypeError: The requested sorting criteria is of invalid type.
@@ -472,8 +541,8 @@ class Client:
       raise TypeError('The requested sorting criteria is of invalid type.')
 
     t = await self.__get(
-      '/rankings/bots',
-      limit=max(min(limit or 100, 500), 1),
+      '/discord/rankings/bots',
+      limit=max(min(limit or 100, 100), 1),
       sortBy=sort_by._SortBy__by,
       sortMethod=sort_by._SortBy__method,
     )

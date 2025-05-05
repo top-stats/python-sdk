@@ -103,7 +103,7 @@ class PartialBot(BotStats):
   __slots__: tuple[str, ...] = ('id', 'name')
 
   id: int
-  """This bot's ID."""
+  """This bot's Discord ID."""
 
   name: str
   """This bot's username."""
@@ -139,6 +139,7 @@ class Bot(PartialBot):
   """A Discord bot's detailed information."""
 
   __slots__: tuple[str, ...] = (
+    'topgg_id',
     'owners',
     'tags',
     'is_deleted',
@@ -151,6 +152,9 @@ class Bot(PartialBot):
     'daily_difference',
     'monthly_difference',
   )
+
+  topgg_id: int
+  """This bot's Top.gg ID."""
 
   owners: list[int]
   """This bot's owner IDs."""
@@ -186,6 +190,7 @@ class Bot(PartialBot):
   """Difference percentage from the previous month."""
 
   def __init__(self, json: dict):
+    self.topgg_id = int(json['topGGId'])
     self.owners = [int(i) for i in (json.get('owners') or ())]
     self.tags = json.get('tags') or []
     self.is_deleted = json['deleted']

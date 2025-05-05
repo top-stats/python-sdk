@@ -44,6 +44,18 @@ async def main() -> None:
     for b in bots:
       print(b)
     
+    # Search for bots that has the name 'MEE6.'
+    mee6_bots = await ts.search_bots(name='MEE6')
+
+    for b in mee6_bots:
+      print(b)
+
+    # Search for anime-tagged bots.
+    anime_bots = await ts.search_bots(tag='anime')
+
+    for b in anime_bots:
+      print(b)
+    
     # Fetch a bot's historical server count.
     sc = await ts.get_historical_bot_server_count(432610292342587392)
 
