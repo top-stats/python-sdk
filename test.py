@@ -49,6 +49,16 @@ async def run() -> None:
     for b in bots:
       test_attributes(b)
 
+    mee6_bots = await ts.search_bots(name='MEE6')
+
+    for b in mee6_bots:
+      test_attributes(b)
+
+    anime_bots = await ts.search_bots(tag='anime')
+
+    for b in anime_bots:
+      test_attributes(b)
+
     types = ('monthly_votes', 'server_count', 'total_votes', 'review_count')
 
     for ty in types:
