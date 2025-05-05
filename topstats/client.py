@@ -104,7 +104,7 @@ class Client:
 
     self.__ratelimiters = endpoint_ratelimits(**endpoint_ratelimits_kwargs)
     self.__current_ratelimits = endpoint_ratelimits(
-      None, None, None, None, None, None, None, None, None
+      **{key: None for key in endpoint_ratelimits_kwargs.keys()}
     )
 
   def __repr__(self) -> str:
