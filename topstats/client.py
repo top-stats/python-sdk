@@ -222,7 +222,7 @@ class Client:
     :type tag: Optional[:py:class:`str`]
     :param offset: The amount of bots to be skipped.
     :type offset: Optional[:py:class:`int`]
-    :param limit: The maximum amount of bots to be queried. Defaults to ``100``. This can't exceed ``100``.
+    :param limit: The maximum amount of bots to be queried. Defaults to ``50`` or ``100`` depending on the parameter. This can't exceed the default value.
     :type limit: Optional[:py:class:`int`]
     :param include_deleted: Whether to include deleted bots or not. Defaults to :py:obj:`False`.
     :type include_deleted: :py:class:`bool`
