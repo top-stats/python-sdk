@@ -140,7 +140,6 @@ class Bot(PartialBot):
 
   __slots__: tuple[str, ...] = (
     'topgg_id',
-    'topgg_url',
     'owners',
     'tags',
     'is_deleted',
@@ -156,9 +155,6 @@ class Bot(PartialBot):
 
   topgg_id: int
   """This bot's Top.gg ID."""
-
-  topgg_url: str
-  """This bot's Top.gg page URL."""
 
   owners: list[int]
   """This bot's owner IDs."""
@@ -195,7 +191,6 @@ class Bot(PartialBot):
 
   def __init__(self, json: dict):
     self.topgg_id = int(json['topGGId'])
-    self.topgg_url = f'https://top.gg/bot/{self.topgg_id}'
     self.owners = [int(i) for i in (json.get('owners') or ())]
     self.tags = json.get('tags') or []
     self.is_deleted = json['deleted']
