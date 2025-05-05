@@ -456,7 +456,7 @@ class Client:
 
     :param sort_by: The requested criteria and sorting method.
     :type sort_by: :class:`.SortBy`
-    :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``500``.
+    :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``100``.
     :type limit: Optional[:py:class:`int`]
 
     :exception TypeError: The requested sorting criteria is of invalid type.
@@ -473,7 +473,7 @@ class Client:
 
     t = await self.__get(
       '/rankings/bots',
-      limit=max(min(limit or 100, 500), 1),
+      limit=max(min(limit or 100, 100), 1),
       sortBy=sort_by._SortBy__by,
       sortMethod=sort_by._SortBy__method,
     )
