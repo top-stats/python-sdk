@@ -147,7 +147,7 @@ class Bot(PartialBot):
     'short_description',
     'prefix',
     'website',
-    'approved_at',
+    'submitted_at',
     'timestamp',
     'daily_difference',
     'monthly_difference',
@@ -177,8 +177,8 @@ class Bot(PartialBot):
   website: str
   """This bot's website URL."""
 
-  approved_at: datetime
-  """When this bot was approved on Top.gg."""
+  submitted_at: datetime
+  """When this bot was submitted on Top.gg."""
 
   timestamp: datetime
   """When this bot was updated by topstats.gg."""
@@ -197,7 +197,7 @@ class Bot(PartialBot):
     self.short_description = json['short_desc']
     self.prefix = json['prefix']
     self.website = json['website']
-    self.approved_at = datetime.fromisoformat(
+    self.submitted_at = datetime.fromisoformat(
       json['approved_at'].replace('Z', '+00:00')
     )
     self.timestamp = datetime.fromtimestamp(
