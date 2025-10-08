@@ -93,12 +93,6 @@ Examples
         print(first, second, third, fourth)
   
   if __name__ == '__main__':
-    
-    # See https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
-    # for more details.
-    if os.name == 'nt':
-      asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    
     asyncio.run(main())
 
 .. toctree::
