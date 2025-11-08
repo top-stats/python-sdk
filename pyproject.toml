@@ -30,6 +30,6 @@ requires-python = ">=3.10"
 
 [project.urls]
 Documentation = "https://topstats.readthedocs.io/en/latest/"
-"Raw API Documentation" = "https://docs.topstats.gg/introduction/introduction/"
+"Raw API Documentation" = "https://docs.topstats.gg/docs/"
 Repository = "https://github.com/top-stats/python-sdk"
 "Support server" = "https://discord.gg/jjEauJXuZc"
