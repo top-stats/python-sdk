@@ -20,7 +20,7 @@ A simple API wrapper for `topstats.gg <https://topstats.gg/>`_ written in Python
 Getting started
 ---------------
 
-Make sure you already have an API token handy. See `this page <https://docs.topstats.gg/authentication/tokens>_` on how to retrieve it.
+Make sure you already have an API token handy. See `this page <https://docs.topstats.gg/docs/authentication/tokens>`_ on how to retrieve it.
 
 After that, run the following command in your terminal:
 
