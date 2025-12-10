@@ -24,10 +24,11 @@ SOFTWARE.
 """
 
 from aiohttp import ClientResponseError, ClientSession, ClientTimeout
+from typing import Any, Optional, Union
 from collections.abc import Iterable
-from typing import Optional, Union
 from collections import namedtuple
 from asyncio import sleep
+from yarl import Query
 from time import time
 from re import sub
 import json
@@ -113,8 +114,8 @@ class Client:
   async def __get(
     self,
     path: str,
-    **params: dict[str, Union[str, int]],
-  ) -> dict:
+    **params: Query,
+  ) -> Any:
     if self.__session.closed:
       raise Error('Client session is already closed.')
 
@@ -212,7 +213,7 @@ class Client:
     offset: Optional[int] = None,
     limit: Optional[int] = None,
     include_deleted: bool = False,
-  ) -> Bot:
+  ) -> Iterable[Bot]:
     """
     Fetches and yields several Discord bots from their name or tag.
 
@@ -252,8 +253,8 @@ class Client:
         await self.__get(
           url,
           query=query,
-          offset=max(offset or 0, 0),
-          limit=max(min(limit or max_limit, max_limit), 1),
+          offset=str(max(offset or 0, 0)),
+          limit=str(max(min(limit or max_limit, max_limit), 1)),
           includeDeleted=str(include_deleted).lower(),
         )
       )['data']['results'],
@@ -321,12 +322,14 @@ class Client:
 
       period = Period.ALL_TIME
 
-    ids = tuple(Client.__validate_ids(*ids))
+    validated_ids = tuple(Client.__validate_ids(*ids))
     c = await self.__get(
-      f'/discord/compare/historical/{"/".join(ids)}', timeFrame=period.value, type=kind
+      f'/discord/compare/historical/{"/".join(validated_ids)}',
+      timeFrame=period.value,
+      type=kind,
     )
 
-    return zip(*((Timestamped(t, kind) for t in c['data'][i]) for i in ids))
+    return zip(*((Timestamped(t, kind) for t in c['data'][i]) for i in validated_ids))
 
   async def get_historical_bot_monthly_votes(
     self, id: int, period: Optional[Period] = None
@@ -542,9 +545,9 @@ class Client:
 
     t = await self.__get(
       '/discord/rankings/bots',
-      limit=max(min(limit or 100, 100), 1),
-      sortBy=sort_by._SortBy__by,
-      sortMethod=sort_by._SortBy__method,
+      limit=str(max(min(limit or 100, 100), 1)),
+      sortBy=sort_by._by,
+      sortMethod=sort_by._method,
     )
 
     return map(PartialBot, t.get('data', ()))

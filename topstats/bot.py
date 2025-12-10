@@ -24,7 +24,7 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import Optional, Union
+from typing import Optional
 
 from .data import Ranked
 
@@ -120,7 +120,7 @@ class PartialBot(BotStats):
   def __int__(self) -> int:
     return self.id
 
-  def __eq__(self, other: Union['PartialBot', 'Bot']) -> bool:
+  def __eq__(self, other: object) -> bool:
     if isinstance(other, __class__):
       return self.id == other.id
 
@@ -204,7 +204,7 @@ class Bot(PartialBot):
       int(json['unix_timestamp']) // 1000, tz=timezone.utc
     )
 
-    if percentage_changes := json.get('percentageChanges'):
+    if percentage_changes := json.get('percentage_changes'):
       daily = percentage_changes.get('daily')
       monthly = percentage_changes.get('monthly')
 

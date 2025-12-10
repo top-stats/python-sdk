@@ -48,8 +48,11 @@ class DataPoint:
   def __str__(self) -> str:
     return str(self.value)
 
-  def __eq__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value == float(other)
+  def __eq__(self, other: object) -> bool:
+    if other_float := getattr(other, '__float__', None):
+      return self.value == other_float()
+
+    return False
 
   def __lt__(self, other: Union['DataPoint', float, int]) -> bool:
     return self.value < float(other)
@@ -131,15 +134,15 @@ class Period(Enum):
 class SortBy:
   """The requested sorting method for sorting Discord bots."""
 
-  __slots__: tuple[str, ...] = ('__by', '__method')
+  __slots__: tuple[str, ...] = ('_by', '_method')
 
   def __init__(
     self,
     sort_by: str,
     ascending: bool,
   ):
-    self.__by = f'{sort_by}_rank'
-    self.__method = f'{"a" if ascending else "de"}sc'
+    self._by = f'{sort_by}_rank'
+    self._method = f'{"a" if ascending else "de"}sc'
 
   @staticmethod
   def monthly_votes(*, ascending: bool = False) -> 'SortBy':
