@@ -16,19 +16,19 @@ jobs:
       matrix:
         python-version: ['3.10', 3.11, 3.12, 3.13, 3.14]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: python3 -m pip install .
+      - name: Install ruff
+        if: ${{ matrix.python-version == 3.14 }}
+        run: python3 -m pip install ruff
       - name: Run tests
         run: python3 test.py
         env:
           TOPSTATS_TOKEN: ${{ secrets.TOPSTATS_TOKEN }}
-      - name: Install dev dependencies
-        if: ${{ matrix.python-version == 3.14 }}
-        run: python3 -m pip install ruff
-      - name: Lint with ruff
+      - name: Lint files
         if: ${{ matrix.python-version == 3.14 }}
         run: python3 -m ruff check
