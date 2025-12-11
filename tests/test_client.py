@@ -68,6 +68,21 @@ async def test_Client_get_top_bots_works(
 
 
 @pytest.mark.asyncio
+async def test_Client_get_recent_bot_stats_works(
+  monkeypatch: pytest.MonkeyPatch,
+  client: topstats.Client,
+) -> None:
+  with RequestMock(200, 'OK', 'mocks/get_recent_bot_stats.json') as request:
+    monkeypatch.setattr('aiohttp.ClientSession.get', request)
+
+    stats = await client.get_recent_bot_stats(1026525568344264724)
+
+    _test_attributes(stats)
+
+    request.assert_called_once()
+
+
+@pytest.mark.asyncio
 async def test_Client_search_bots_by_name_works(
   monkeypatch: pytest.MonkeyPatch,
   client: topstats.Client,

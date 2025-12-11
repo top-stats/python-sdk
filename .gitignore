@@ -4,3 +4,4 @@ docs/_build/
 dist/
 .ruff_cache/
 .vscode/
+.coverage

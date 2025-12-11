@@ -2,6 +2,7 @@ prune .github
 prune .ruff_cache
 prune docs
 prune tests
+exclude .coverage
 exclude .gitattributes
 exclude .gitignore
 exclude .readthedocs.yml
