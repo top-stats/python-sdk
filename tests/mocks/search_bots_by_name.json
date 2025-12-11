@@ -1,0 +1,133 @@
+{
+  "data": {
+    "count": 3,
+    "results": [
+      {
+        "id": "159985870458322944",
+        "topGGId": "159985870458322944",
+        "certified": false,
+        "owners": [
+          "138362511190786048"
+        ],
+        "deleted": false,
+        "name": "MEE6",
+        "def_avatar": "1.png",
+        "avatar": "https://cdn.discordapp.com/avatars/159985870458322944/b6d7d72df5ac698ab88249554cfb9e81.webp?size=256",
+        "short_desc": "The #1 Discord bot! MEE6 gives you full control to create the discord server of your dreams. User-friendly, easy to set up & maintain!",
+        "lib": "",
+        "prefix": "!",
+        "website": "https://mee6.xyz",
+        "approved_at": "2018-02-05T04:43:47.000Z",
+        "monthly_votes": 336,
+        "server_count": 19500000,
+        "total_votes": 466072,
+        "shard_count": 0,
+        "monthly_votes_rank": 253,
+        "server_count_rank": 2,
+        "shard_count_rank": 13428,
+        "total_votes_rank": 106,
+        "timestamp": "2025-12-11T18:00:00Z",
+        "unix_timestamp": "1765476000000",
+        "tags": [
+          "birthday",
+          "economy",
+          "giveaway",
+          "leveling",
+          "logging",
+          "meme",
+          "moderation",
+          "reaction-roles",
+          "role-management",
+          "social",
+          "utility"
+        ],
+        "avg_review_rating": 2.605906313645622,
+        "review_count": 982,
+        "percentage_changes": {
+          "daily": 0.32,
+          "monthly": 1.07
+        }
+      },
+      {
+        "id": "784752071026802718",
+        "topGGId": "784752071026802718",
+        "certified": false,
+        "owners": [
+          "755447180910788698"
+        ],
+        "deleted": false,
+        "name": "Bread it's not mee6",
+        "def_avatar": "1.png",
+        "avatar": "https://cdn.discordapp.com/avatars/784752071026802718/32d32ba76807189687cc032369c6c84e.png",
+        "short_desc": "Bread it's not mee6 is a moderation bot with, Anti Spam, Anti Toxic, Badwords, Welcome Image, Fun, Warn System, Auto Mod, Role. Dyno, Arcane",
+        "lib": "",
+        "prefix": "/",
+        "website": "",
+        "approved_at": "2020-12-14T16:39:02.000Z",
+        "monthly_votes": 0,
+        "server_count": 1955,
+        "total_votes": 2002,
+        "shard_count": 0,
+        "monthly_votes_rank": 30353,
+        "server_count_rank": 1618,
+        "shard_count_rank": 29965,
+        "total_votes_rank": 1581,
+        "timestamp": "2025-12-11T17:00:00Z",
+        "unix_timestamp": "1765472400000",
+        "tags": [
+          "anti-raid",
+          "anti-spam",
+          "bad-words",
+          "fun",
+          "moderation",
+          "non-toxic",
+          "utils",
+          "warns"
+        ],
+        "avg_review_rating": 4.384615384615385,
+        "review_count": 13,
+        "percentage_changes": {
+          "daily": 0,
+          "monthly": 0
+        }
+      },
+      {
+        "id": "1013859380652953671",
+        "topGGId": "1013859380652953671",
+        "certified": false,
+        "owners": [
+          "268815279570681857"
+        ],
+        "deleted": false,
+        "name": "MEE6 Slander",
+        "def_avatar": "1.png",
+        "avatar": "https://cdn.discordapp.com/avatars/1013859380652953671/6a0ddb32ec7c172c56dcb5651571aa42.png",
+        "short_desc": "A bot that slanders mee6 every time a message is sent",
+        "lib": "",
+        "prefix": "N/A",
+        "website": "",
+        "approved_at": "2022-08-29T18:10:22.788Z",
+        "monthly_votes": 0,
+        "server_count": 0,
+        "total_votes": 26,
+        "shard_count": 0,
+        "monthly_votes_rank": 2649,
+        "server_count_rank": 10912,
+        "shard_count_rank": 605,
+        "total_votes_rank": 16504,
+        "timestamp": "2025-12-11T18:00:00Z",
+        "unix_timestamp": "1765476000000",
+        "tags": [
+          "mee6",
+          "slander"
+        ],
+        "avg_review_rating": 5,
+        "review_count": 3,
+        "percentage_changes": {
+          "daily": 0,
+          "monthly": 0
+        }
+      }
+    ]
+  }
+}

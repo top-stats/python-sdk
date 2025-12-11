@@ -32,6 +32,7 @@ from .bot import (
 )
 from .errors import Error, RequestError, Ratelimited
 from .data import Period, SortBy, Timestamped
+from .ratelimiter import Ratelimiter
 from .version import VERSION
 from .client import Client
 
@@ -53,6 +54,7 @@ __all__ = (
   'RequestError',
   'Ranked',
   'Ratelimited',
+  'Ratelimiter',
   'RecentBotStats',
   'SortBy',
   'Timestamped',

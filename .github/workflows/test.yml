@@ -21,12 +21,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: python3 -m pip install .
+        run: |
+          python3 -m pip install .
+          python3 -m pip install -r tests/requirements.txt
       - name: Install ruff
         if: ${{ matrix.python-version == 3.14 }}
         run: python3 -m pip install ruff
       - name: Run tests
-        run: python3 test.py
+        run: python3 -m pytest
         env:
           TOPSTATS_TOKEN: ${{ secrets.TOPSTATS_TOKEN }}
       - name: Lint files

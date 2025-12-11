@@ -36,14 +36,14 @@ if typing.TYPE_CHECKING:
 class Ratelimiter:
   """Handles ratelimits for a specific endpoint."""
 
-  __slots__: tuple[str, ...] = ('__lock', '__max_calls', '__period', '__calls')
+  __slots__: tuple[str, ...] = ('_calls', '__period', '__max_calls', '__lock')
 
   def __init__(
     self,
     max_calls: int,
     period: float = 1.0,
   ):
-    self.__calls = deque()
+    self._calls = deque()
     self.__period = period
     self.__max_calls = max_calls
     self.__lock = asyncio.Lock()
@@ -52,7 +52,7 @@ class Ratelimiter:
     """Delays the request to this endpoint if it could lead to a ratelimit."""
 
     async with self.__lock:
-      if len(self.__calls) >= self.__max_calls:
+      if len(self._calls) >= self.__max_calls:
         until = time() + self.__period - self._timespan
 
         if (sleep_time := until - time()) > 0:
@@ -69,16 +69,16 @@ class Ratelimiter:
     """Stores the previous request's timestamp."""
 
     async with self.__lock:
-      self.__calls.append(time())
+      self._calls.append(time())
 
       while self._timespan >= self.__period:
-        self.__calls.popleft()
+        self._calls.popleft()
 
   @property
   def _timespan(self) -> float:
     """The timespan between the first call and last call."""
 
-    return self.__calls[-1] - self.__calls[0]
+    return self._calls[-1] - self._calls[0]
 
 
 class Ratelimiters:

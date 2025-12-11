@@ -33,3 +33,14 @@ Documentation = "https://topstats.readthedocs.io/en/latest/"
 "Raw API Documentation" = "https://docs.topstats.gg/docs/"
 Repository = "https://github.com/top-stats/python-sdk"
 "Support server" = "https://discord.gg/jjEauJXuZc"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "^\\s*async def __a\\w+__\\(",
+  "# pragma: nocover",
+  "TYPE_CHECKING:$"
+]

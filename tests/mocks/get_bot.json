@@ -1,0 +1,37 @@
+{
+  "id": "432610292342587392",
+  "topGGId": "432610292342587392",
+  "owners": [
+    "275748765166469120"
+  ],
+  "deleted": false,
+  "name": "Mudae",
+  "def_avatar": "1.png",
+  "short_desc": "Database of 135,000 anime/game characters: make and customize the best collection in your server. 400 commands, multiplayer games and more!",
+  "prefix": "$",
+  "approved_at": "2018-04-21T21:17:57.793Z",
+  "monthly_votes": 870212,
+  "server_count": 3371839,
+  "total_votes": 243094025,
+  "review_count": 13802,
+  "monthly_votes_rank": 1,
+  "server_count_rank": 15,
+  "total_votes_rank": 1,
+  "timestamp": "2025-12-11T17:00:00Z",
+  "unix_timestamp": "1765472400000",
+  "tags": [
+    "anime",
+    "database",
+    "fun",
+    "game"
+  ],
+  "avg_review_rating": 4.505578901608462,
+  "percentage_changes": {
+    "daily": 0.32,
+    "monthly": 0.89
+  },
+  "certified": false,
+  "avatar": "https://cdn.discordapp.com/avatars/432610292342587392/29cb28fbf65a3958105026ab03abd306.webp?size=256",
+  "lib": "",
+  "website": "https://www.patreon.com/mudae"
+}
