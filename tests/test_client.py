@@ -37,6 +37,64 @@ def test_Client_attributes_work(client: topstats.Client) -> None:
 
 
 @pytest.mark.asyncio
+async def test_Client_basic_error_handling_works() -> None:
+  with pytest.raises(TypeError, match='^An API token is required to use this API.$'):
+    async with topstats.Client(''):
+      pass
+
+  with pytest.raises(topstats.Error, match='^Client session is already closed.$'):
+    token = getenv('TOPSTATS_TOKEN')
+
+    if TYPE_CHECKING:
+      assert token is not None, 'Missing topstats.gg API token'
+
+    test_client = topstats.Client(token)
+
+    await test_client.close()
+    await test_client.get_bot(432610292342587392)
+
+
+@pytest.mark.asyncio
+async def test_Client_request_error_handling_works(
+  monkeypatch: pytest.MonkeyPatch, client: topstats.Client
+) -> None:
+  with RequestMock(
+    404,
+    'Not Found',
+    {
+      'code': 404,
+      'message': 'User does not exist, or no data exists for the provided id.',
+    },
+  ) as request:
+    monkeypatch.setattr('aiohttp.ClientSession.get', request)
+
+    with pytest.raises(
+      topstats.RequestError,
+      match="^Got 404: 'User does not exist, or no data exists for the provided id.'$",
+    ) as raises:
+      await client.get_bot(432610292342587392)
+
+    _test_attributes(raises.value)
+
+    request.assert_called_once()
+
+  with RequestMock(429, 'Ratelimited', {'expiresIn': 6000}) as request:
+    monkeypatch.setattr('aiohttp.ClientSession.get', request)
+
+    for _ in range(2):
+      with pytest.raises(
+        topstats.Ratelimited,
+        match='^The client is blocked by the API. Please try again in ',
+      ) as raises:
+        await client.get_bot(432610292342587392)
+
+      _test_attributes(raises.value)
+      assert 0 <= (6.0 - raises.value.retry_after) < 0.001
+
+    request.assert_called_once()
+
+
+@pytest.mark.asyncio
 async def test_Client_get_bot_works(
   monkeypatch: pytest.MonkeyPatch,
   client: topstats.Client,
@@ -51,15 +109,35 @@ async def test_Client_get_bot_works(
     request.assert_called_once()
 
 
+@pytest.mark.parametrize(
+  'sort_by_type', ('monthly_votes', 'total_votes', 'server_count', 'review_count')
+)
 @pytest.mark.asyncio
 async def test_Client_get_top_bots_works(
-  monkeypatch: pytest.MonkeyPatch,
-  client: topstats.Client,
+  monkeypatch: pytest.MonkeyPatch, client: topstats.Client, sort_by_type: str
 ) -> None:
+  sort_by = getattr(topstats.SortBy, sort_by_type)
+
   with RequestMock(200, 'OK', 'mocks/get_top_bots.json') as request:
     monkeypatch.setattr('aiohttp.ClientSession.get', request)
 
-    bots = await client.get_top_bots(sort_by=topstats.SortBy.server_count())
+    bots = await client.get_top_bots(sort_by=sort_by())
+
+    for bot in bots:
+      _test_attributes(bot)
+
+    request.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_Client_get_users_bot_works(
+  monkeypatch: pytest.MonkeyPatch,
+  client: topstats.Client,
+) -> None:
+  with RequestMock(200, 'OK', 'mocks/get_users_bot.json') as request:
+    monkeypatch.setattr('aiohttp.ClientSession.get', request)
+
+    bots = await client.get_users_bot(121919449996460033)
 
     for bot in bots:
       _test_attributes(bot)
@@ -103,6 +181,11 @@ async def test_Client_search_bots_by_tag_works(
   monkeypatch: pytest.MonkeyPatch,
   client: topstats.Client,
 ) -> None:
+  with pytest.raises(
+    topstats.Error, match='^Either a bot name or tag must be specified.$'
+  ):
+    await client.search_bots()
+
   with RequestMock(200, 'OK', 'mocks/search_bots_by_tag.json') as request:
     monkeypatch.setattr('aiohttp.ClientSession.get', request)
 
@@ -121,11 +204,37 @@ async def test_Client_search_bots_by_tag_works(
 async def test_Client_get_historical_bot_works(
   monkeypatch: pytest.MonkeyPatch, client: topstats.Client, ty: str
 ) -> None:
+  method = getattr(client, f'get_historical_bot_{ty}')
+
   with RequestMock(200, 'OK', f'mocks/get_historical_bot_{ty}.json') as request:
     monkeypatch.setattr('aiohttp.ClientSession.get', request)
 
-    method = getattr(client, f'get_historical_bot_{ty}')
     bots = await method(432610292342587392)
+
+    for bot in bots:
+      _test_attributes(bot)
+
+    request.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_Client_compare_bot_works(
+  monkeypatch: pytest.MonkeyPatch, client: topstats.Client
+) -> None:
+  with pytest.raises(
+    IndexError, match='^Expected 2 to 4 unique bot IDs to compare, but got '
+  ):
+    await client.compare_bots()
+
+  with pytest.raises(
+    IndexError, match='^Expected 2 to 4 unique bot IDs to compare, but got '
+  ):
+    await client.compare_bots(1026525568344264724)
+
+  with RequestMock(200, 'OK', 'mocks/compare_bots.json') as request:
+    monkeypatch.setattr('aiohttp.ClientSession.get', request)
+
+    bots = await client.compare_bots(1026525568344264724, 432610292342587392)
 
     for bot in bots:
       _test_attributes(bot)
@@ -137,13 +246,14 @@ async def test_Client_get_historical_bot_works(
   'ty', ('monthly_votes', 'review_count', 'server_count', 'total_votes')
 )
 @pytest.mark.asyncio
-async def test_Client_compare_bot_works(
+async def test_Client_specific_compare_bot_works(
   monkeypatch: pytest.MonkeyPatch, client: topstats.Client, ty: str
 ) -> None:
+  method = getattr(client, f'compare_bot_{ty}')
+
   with RequestMock(200, 'OK', f'mocks/compare_bot_{ty}.json') as request:
     monkeypatch.setattr('aiohttp.ClientSession.get', request)
 
-    method = getattr(client, f'compare_bot_{ty}')
     vs = await method(432610292342587392, 437808476106784770)
 
     for first, second in vs:
@@ -157,11 +267,15 @@ async def test_Client_compare_bot_works(
 async def test_Client_compare_bot_total_votes_4x_works(
   monkeypatch: pytest.MonkeyPatch, client: topstats.Client
 ) -> None:
+  period = topstats.Period.LAST_YEAR
+
+  _test_attributes(period)
+
   with RequestMock(200, 'OK', 'mocks/compare_bot_total_votes_4x.json') as request:
     monkeypatch.setattr('aiohttp.ClientSession.get', request)
 
     vs = await client.compare_bot_total_votes(
-      topstats.Period.LAST_YEAR,
+      period,
       339254240012664832,
       432610292342587392,
       408785106942164992,

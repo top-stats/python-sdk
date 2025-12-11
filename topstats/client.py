@@ -26,7 +26,6 @@ SOFTWARE.
 from aiohttp import ClientResponseError, ClientSession, ClientTimeout
 from typing import Any, Optional, Union
 from collections.abc import Iterable
-from collections import namedtuple
 from asyncio import sleep
 from yarl import Query
 from time import time
@@ -65,6 +64,13 @@ class Client:
     '__current_ratelimits',
   )
 
+  __own_session: bool
+  __session: ClientSession
+  __token: str
+  __global_ratelimiter: Ratelimiter
+  __ratelimiters: dict[str, Ratelimiters]
+  __current_ratelimits: dict[str, Optional[float]]
+
   def __init__(self, token: str, *, session: Optional[ClientSession] = None):
     if not isinstance(token, str) or not token:
       raise TypeError('An API token is required to use this API.')
@@ -77,7 +83,7 @@ class Client:
 
     self.__global_ratelimiter = Ratelimiter(119, 60)
 
-    endpoint_ratelimits_kwargs = {
+    endpoint_ratelimits = {
       'search': Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
       'discord_tags': Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
       'discord_bots': Ratelimiters((self.__global_ratelimiter, Ratelimiter(59, 60))),
@@ -99,14 +105,8 @@ class Client:
       ),
     }
 
-    endpoint_ratelimits = namedtuple(
-      'EndpointRatelimits', ' '.join(endpoint_ratelimits_kwargs.keys())
-    )
-
-    self.__ratelimiters = endpoint_ratelimits(**endpoint_ratelimits_kwargs)
-    self.__current_ratelimits = endpoint_ratelimits(
-      **{key: None for key in endpoint_ratelimits_kwargs.keys()}
-    )
+    self.__ratelimiters = endpoint_ratelimits
+    self.__current_ratelimits = {key: None for key in endpoint_ratelimits.keys()}
 
   def __repr__(self) -> str:
     return f'<{__class__.__name__} {self.__session!r}>'
@@ -122,17 +122,18 @@ class Client:
     ratelimiter_key = sub(
       '_{2,}', '_', sub(r'\d+', '', path).strip('/').replace('/', '_')
     )
-    current_ratelimit = getattr(self.__current_ratelimits, ratelimiter_key)
+
+    current_ratelimit = self.__current_ratelimits[ratelimiter_key]
 
     if current_ratelimit is not None:
       current_time = time()
 
       if current_time < current_ratelimit:
         raise Ratelimited(current_ratelimit - current_time)
-      else:
-        setattr(self.__current_ratelimits, ratelimiter_key, None)
+      else:  # pragma: nocover
+        self.__current_ratelimits[ratelimiter_key] = None
 
-    ratelimiter = getattr(self.__ratelimiters, ratelimiter_key)
+    ratelimiter = self.__ratelimiters[ratelimiter_key]
 
     kwargs = {}
 
@@ -159,7 +160,7 @@ class Client:
           try:
             output = await resp.json()
             retry_after = float(output.get('expiresIn', 0)) / 1000.0
-          except (ValueError, json.decoder.JSONDecodeError):
+          except (ValueError, json.decoder.JSONDecodeError):  # pragma: nocover
             pass
 
           resp.raise_for_status()
@@ -168,13 +169,13 @@ class Client:
       except ClientResponseError:
         if status == 429 and retry_after is not None:
           if retry_after > MAXIMUM_DELAY_THRESHOLD:
-            setattr(self.__current_ratelimits, ratelimiter_key, time() + retry_after)
+            self.__current_ratelimits[ratelimiter_key] = time() + retry_after
 
             raise Ratelimited(retry_after) from None
+          else:  # pragma: nocover
+            await sleep(retry_after)
 
-          await sleep(retry_after)
-
-          return await self.__get(path, **params)
+            return await self.__get(path, **params)
 
         raise RequestError(output and output.get('message'), status) from None
 
@@ -540,7 +541,7 @@ class Client:
     :rtype: Iterable[:class:`.PartialBot`]
     """
 
-    if not isinstance(sort_by, SortBy):
+    if not isinstance(sort_by, SortBy):  # pragma: nocover
       raise TypeError('The requested sorting criteria is of invalid type.')
 
     t = await self.__get(

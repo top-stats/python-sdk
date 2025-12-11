@@ -48,7 +48,7 @@ class BotStats:
   server_count: Ranked
   """The amount servers this bot is in."""
 
-  review_count: Ranked
+  review_count: Optional[Ranked]
   """The amount reviews this bot has."""
 
   def __init__(self, json: dict):
@@ -124,7 +124,7 @@ class PartialBot(BotStats):
     if isinstance(other, __class__):
       return self.id == other.id
 
-    return NotImplemented
+    return NotImplemented  # pragma: nocover
 
   @property
   def created_at(self) -> datetime:
@@ -153,7 +153,7 @@ class Bot(PartialBot):
     'monthly_difference',
   )
 
-  topgg_id: int
+  topgg_id: Optional[int]
   """This bot's Top.gg ID."""
 
   owners: list[int]
@@ -190,7 +190,11 @@ class Bot(PartialBot):
   """Difference percentage from the previous month."""
 
   def __init__(self, json: dict):
-    self.topgg_id = int(json['topGGId'])
+    if topgg_id := json.get('topGGId'):
+      self.topgg_id = topgg_id
+    else:
+      self.topgg_id = None
+
     self.owners = [int(i) for i in (json.get('owners') or ())]
     self.tags = json.get('tags') or []
     self.is_deleted = json['deleted']
@@ -210,7 +214,7 @@ class Bot(PartialBot):
 
       self.daily_difference = daily and float(daily)
       self.monthly_difference = monthly and float(monthly)
-    else:
+    else:  # pragma: nocover
       self.daily_difference = None
       self.monthly_difference = None
 

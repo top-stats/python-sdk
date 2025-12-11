@@ -38,6 +38,11 @@ class Ratelimiter:
 
   __slots__: tuple[str, ...] = ('_calls', '__period', '__max_calls', '__lock')
 
+  _calls: deque[float]
+  __period: float
+  __max_calls: int
+  __lock: asyncio.Lock
+
   def __init__(
     self,
     max_calls: int,
@@ -85,6 +90,8 @@ class Ratelimiters:
   """Handles ratelimits for multiple endpoints."""
 
   __slots__: tuple[str, ...] = ('__ratelimiters',)
+
+  __ratelimiters: Iterable[Ratelimiter]
 
   def __init__(self, ratelimiters: Iterable[Ratelimiter]):
     self.__ratelimiters = ratelimiters

@@ -33,16 +33,20 @@ class DataPoint:
 
   __slots__: tuple[str, ...] = ('value',)
 
-  value: int
+  value: Optional[int]
   """This data point's value."""
 
-  def __init__(self, value: int):
+  def __init__(self, value: Optional[int]):
     self.value = value
 
   def __int__(self) -> int:
+    assert self.value is not None, 'Data point is None.'
+
     return self.value
 
   def __float__(self) -> float:
+    assert self.value is not None, 'Data point is None.'
+
     return float(self.value)
 
   def __str__(self) -> str:
@@ -52,19 +56,19 @@ class DataPoint:
     if other_float := getattr(other, '__float__', None):
       return self.value == other_float()
 
-    return False
+    return False  # pragma: nocover
 
   def __lt__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value < float(other)
+    return self.value is not None and self.value < float(other)
 
   def __gt__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value > float(other)
+    return self.value is not None and self.value > float(other)
 
   def __le__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value <= float(other)
+    return self.value is not None and self.value <= float(other)
 
   def __ge__(self, other: Union['DataPoint', float, int]) -> bool:
-    return self.value >= float(other)
+    return self.value is not None and self.value >= float(other)
 
 
 class Ranked(DataPoint):
@@ -82,7 +86,7 @@ class Ranked(DataPoint):
     self.rank = json.get(f'{key}_rank')
     self.difference = json.get(f'{key}_change')
 
-    super().__init__(json[key])
+    super().__init__(json.get(key))
 
   def __repr__(self) -> str:
     return f'<{__class__.__name__} value={self.value!r} rank={self.rank!r} difference={self.difference!r}>'
@@ -135,6 +139,9 @@ class SortBy:
   """The requested sorting method for sorting Discord bots."""
 
   __slots__: tuple[str, ...] = ('_by', '_method')
+
+  _by: str
+  _method: str
 
   def __init__(
     self,

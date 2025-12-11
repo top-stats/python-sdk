@@ -8,3 +8,5 @@ exclude .gitignore
 exclude .readthedocs.yml
 exclude ruff.toml
 exclude LICENSE
+exclude coverage*
+exclude junit.xml

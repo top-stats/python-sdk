@@ -5,3 +5,5 @@ dist/
 .ruff_cache/
 .vscode/
 .coverage
+coverage*
+junit.xml
