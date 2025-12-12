@@ -10,3 +10,4 @@ exclude ruff.toml
 exclude LICENSE
 exclude coverage*
 exclude junit.xml
+global-exclude __pycache__/*
