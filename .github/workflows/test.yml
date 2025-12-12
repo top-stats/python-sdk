@@ -9,6 +9,7 @@ on:
     paths:
       - '.github/workflows/test.yml'
       - 'topstats/**/*.py'
+  workflow_dispatch: null
 jobs:
   test:
     runs-on: ubuntu-latest
