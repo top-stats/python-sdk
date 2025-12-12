@@ -23,8 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Optional
-
 
 class Error(Exception):
   """The base error class. Extends :py:class:`Exception`."""
@@ -37,13 +35,13 @@ class RequestError(Error):
 
   __slots__: tuple[str, ...] = ('message', 'status')
 
-  message: Optional[str]
+  message: str | None
   """The message returned from the API."""
 
-  status: Optional[int]
+  status: int | None
   """The status code returned from the API."""
 
-  def __init__(self, message: Optional[str], status: Optional[int]):
+  def __init__(self, message: str | None, status: int | None):
     self.message = message
     self.status = status
 

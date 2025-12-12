@@ -1,5 +1,5 @@
 from multidict import CIMultiDict, CIMultiDictProxy
-from typing import Any, Optional, TYPE_CHECKING, Union
+from typing import Any, TYPE_CHECKING
 from contextlib import nullcontext
 from inspect import getmembers
 from sys import stdout
@@ -114,11 +114,9 @@ class RequestMock:
   )
 
   __mock_response: mock.Mock
-  __mock_json_response: Optional['TextIOWrapper']
+  __mock_json_response: 'TextIOWrapper | None'
 
-  def __init__(
-    self, status: int, reason: str, mock_response: Optional[Union[str, dict]] = None
-  ):
+  def __init__(self, status: int, reason: str, mock_response: str | dict | None = None):
     self.__mock_response = mock.Mock(specs=aiohttp.ClientResponse)
 
     self.__mock_response.status = status

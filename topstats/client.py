@@ -24,9 +24,9 @@ SOFTWARE.
 """
 
 from aiohttp import ClientResponseError, ClientSession, ClientTimeout
-from typing import Any, Optional, Union
 from collections.abc import Iterable
 from asyncio import sleep
+from typing import Any
 from yarl import Query
 from time import time
 from re import sub
@@ -50,7 +50,7 @@ class Client:
   :param token: The API token to use. To retrieve it, see https://docs.topstats.gg/authentication/tokens/.
   :type token: :py:class:`str`
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
-  :type session: Optional[:class:`~aiohttp.ClientSession`]
+  :type session: :class:`~aiohttp.ClientSession` | :py:obj:`None`
 
   :exception TypeError: ``token`` is not a :py:class:`str` or is empty.
   """
@@ -69,9 +69,9 @@ class Client:
   __token: str
   __global_ratelimiter: Ratelimiter
   __ratelimiters: dict[str, Ratelimiters]
-  __current_ratelimits: dict[str, Optional[float]]
+  __current_ratelimits: dict[str, float | None]
 
-  def __init__(self, token: str, *, session: Optional[ClientSession] = None):
+  def __init__(self, token: str, *, session: ClientSession | None = None):
     if not isinstance(token, str) or not token:
       raise TypeError('An API token is required to use this API.')
 
@@ -209,23 +209,23 @@ class Client:
   async def search_bots(
     self,
     *,
-    name: Optional[str] = None,
-    tag: Optional[str] = None,
-    offset: Optional[int] = None,
-    limit: Optional[int] = None,
+    name: str | None = None,
+    tag: str | None = None,
+    offset: int | None = None,
+    limit: int | None = None,
     include_deleted: bool = False,
   ) -> Iterable[Bot]:
     """
     Fetches and yields several Discord bots from their name or tag.
 
     :param name: The requested bot name. If :py:obj:`None`, defaults to the tag parameter.
-    :type name: Optional[:py:class:`str`]
+    :type name: :py:class:`str` | :py:obj:`None`
     :param tag: The requested bot tag. If :py:obj:`None`, defaults to the name parameter.
-    :type tag: Optional[:py:class:`str`]
+    :type tag: :py:class:`str` | :py:obj:`None`
     :param offset: The amount of bots to be skipped.
-    :type offset: Optional[:py:class:`int`]
+    :type offset: :py:class:`int` | :py:obj:`None`
     :param limit: The maximum amount of bots to be queried. Defaults to ``50`` or ``100`` depending on the parameter. This can't exceed the default value.
-    :type limit: Optional[:py:class:`int`]
+    :type limit: :py:class:`int` | :py:obj:`None`
     :param include_deleted: Whether to include deleted bots or not. Defaults to :py:obj:`False`.
     :type include_deleted: :py:class:`bool`
 
@@ -303,7 +303,7 @@ class Client:
     return map(Bot, b.get('bots', ()))
 
   async def __get_historical_bot_stats(
-    self, kind: str, id: int, period: Optional[Period]
+    self, kind: str, id: int, period: Period | None
   ) -> Iterable[Timestamped]:
     if not isinstance(period, Period):
       period = Period.ALL_TIME
@@ -315,7 +315,7 @@ class Client:
     return (Timestamped(data, kind) for data in response['data'])
 
   async def __compare_historical_bot_stats(
-    self, kind: str, period: Optional[Union[Period, int]], *ids: int
+    self, kind: str, period: Period | int | None, *ids: int
   ) -> Iterable[tuple[Timestamped, ...]]:
     if not isinstance(period, Period):
       if isinstance(period, int):
@@ -333,7 +333,7 @@ class Client:
     return zip(*((Timestamped(t, kind) for t in c['data'][i]) for i in validated_ids))
 
   async def get_historical_bot_monthly_votes(
-    self, id: int, period: Optional[Period] = None
+    self, id: int, period: Period | None = None
   ) -> Iterable[Timestamped]:
     """
     Fetches and yields a Discord bot's historical monthly vote count for a certain period of time.
@@ -341,7 +341,7 @@ class Client:
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
-    :type period: Optional[:class:`.Period`]
+    :type period: :class:`.Period` | :py:obj:`None`
 
     :exception Error: The client is already closed.
     :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
@@ -354,13 +354,13 @@ class Client:
     return await self.__get_historical_bot_stats('monthly_votes', id, period)
 
   async def compare_bot_monthly_votes(
-    self, period: Optional[Union[Period, int]], *ids: int
+    self, period: Period | int | None, *ids: int
   ) -> Iterable[tuple[Timestamped, ...]]:
     """
     Fetches and yields several Discord bots' historical monthly vote count for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
-    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :type period: :class:`.Period` | :py:class:`int` | :py:obj:`None`
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
@@ -376,7 +376,7 @@ class Client:
     return await self.__compare_historical_bot_stats('monthly_votes', period, *ids)
 
   async def get_historical_bot_total_votes(
-    self, id: int, period: Optional[Period] = None
+    self, id: int, period: Period | None = None
   ) -> Iterable[Timestamped]:
     """
     Fetches and yields a Discord bot's historical total vote count for a certain period of time.
@@ -384,7 +384,7 @@ class Client:
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
-    :type period: Optional[:class:`.Period`]
+    :type period: :class:`.Period` | :py:obj:`None`
 
     :exception Error: The client is already closed.
     :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
@@ -397,13 +397,13 @@ class Client:
     return await self.__get_historical_bot_stats('total_votes', id, period)
 
   async def compare_bot_total_votes(
-    self, period: Optional[Union[Period, int]], *ids: int
+    self, period: Period | int | None, *ids: int
   ) -> Iterable[tuple[Timestamped, ...]]:
     """
     Fetches and yields several Discord bots' historical total vote count for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
-    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :type period: :class:`.Period` | :py:class:`int` | :py:obj:`None`
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
@@ -419,7 +419,7 @@ class Client:
     return await self.__compare_historical_bot_stats('total_votes', period, *ids)
 
   async def get_historical_bot_server_count(
-    self, id: int, period: Optional[Period] = None
+    self, id: int, period: Period | None = None
   ) -> Iterable[Timestamped]:
     """
     Fetches and yields a Discord bot's historical server count for a certain period of time.
@@ -427,7 +427,7 @@ class Client:
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
-    :type period: Optional[:class:`.Period`]
+    :type period: :class:`.Period` | :py:obj:`None`
 
     :exception Error: The client is already closed.
     :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
@@ -440,13 +440,13 @@ class Client:
     return await self.__get_historical_bot_stats('server_count', id, period)
 
   async def compare_bot_server_count(
-    self, period: Optional[Union[Period, int]], *ids: int
+    self, period: Period | int | None, *ids: int
   ) -> Iterable[tuple[Timestamped, ...]]:
     """
     Fetches and yields several Discord bots' historical server count for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
-    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :type period: :class:`.Period` | :py:class:`int` | :py:obj:`None`
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
@@ -462,7 +462,7 @@ class Client:
     return await self.__compare_historical_bot_stats('server_count', period, *ids)
 
   async def get_historical_bot_review_count(
-    self, id: int, period: Optional[Period] = None
+    self, id: int, period: Period | None = None
   ) -> Iterable[Timestamped]:
     """
     Fetches and yields a Discord bot's historical review count for a certain period of time.
@@ -470,7 +470,7 @@ class Client:
     :param id: The requested bot's ID.
     :type id: :py:class:`int`
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`.
-    :type period: Optional[:class:`.Period`]
+    :type period: :class:`.Period` | :py:obj:`None`
 
     :exception Error: The client is already closed.
     :exception RequestError: The specified bot does not exist or the client has received other non-favorable responses from the API.
@@ -483,13 +483,13 @@ class Client:
     return await self.__get_historical_bot_stats('review_count', id, period)
 
   async def compare_bot_review_count(
-    self, period: Optional[Union[Period, int]], *ids: int
+    self, period: Period | int | None, *ids: int
   ) -> Iterable[tuple[Timestamped, ...]]:
     """
     Fetches and yields several Discord bots' historical review count for a certain period of time.
 
     :param period: The requested time period. Defaults to :attr:`.Period.ALL_TIME`. If this argument is an :py:class:`int`, then it will be treated as a bot ID as a part of the second argument.
-    :type period: Optional[Union[:class:`.Period`, :py:class:`int`]]
+    :type period: :class:`.Period` | :py:class:`int` | :py:obj:`None`
     :param ids: Set of bot IDs to compare. The API currently only accepts 2 to 4 IDs.
     :type ids: :py:class:`int`
 
@@ -522,7 +522,7 @@ class Client:
     return RecentBotStats(await self.__get(f'/discord/bots/{id}/recent'))
 
   async def get_top_bots(
-    self, sort_by: SortBy, *, limit: Optional[int] = None
+    self, sort_by: SortBy, *, limit: int | None = None
   ) -> Iterable[PartialBot]:
     """
     Fetches and yields top Discord bots based on a certain criteria.
@@ -530,7 +530,7 @@ class Client:
     :param sort_by: The requested criteria and sorting method.
     :type sort_by: :class:`.SortBy`
     :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``100``.
-    :type limit: Optional[:py:class:`int`]
+    :type limit: :py:class:`int` | :py:obj:`None`
 
     :exception TypeError: The requested sorting criteria is of invalid type.
     :exception Error: The client is already closed.

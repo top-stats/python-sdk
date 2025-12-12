@@ -23,7 +23,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from typing import Union, Optional
 from datetime import datetime
 from enum import Enum
 
@@ -33,10 +32,10 @@ class DataPoint:
 
   __slots__: tuple[str, ...] = ('value',)
 
-  value: Optional[int]
+  value: int | None
   """This data point's value."""
 
-  def __init__(self, value: Optional[int]):
+  def __init__(self, value: int | None):
     self.value = value
 
   def __int__(self) -> int:
@@ -58,16 +57,16 @@ class DataPoint:
 
     return False  # pragma: nocover
 
-  def __lt__(self, other: Union['DataPoint', float, int]) -> bool:
+  def __lt__(self, other: 'DataPoint | float | int') -> bool:
     return self.value is not None and self.value < float(other)
 
-  def __gt__(self, other: Union['DataPoint', float, int]) -> bool:
+  def __gt__(self, other: 'DataPoint | float | int') -> bool:
     return self.value is not None and self.value > float(other)
 
-  def __le__(self, other: Union['DataPoint', float, int]) -> bool:
+  def __le__(self, other: 'DataPoint | float | int') -> bool:
     return self.value is not None and self.value <= float(other)
 
-  def __ge__(self, other: Union['DataPoint', float, int]) -> bool:
+  def __ge__(self, other: 'DataPoint | float | int') -> bool:
     return self.value is not None and self.value >= float(other)
 
 
@@ -76,10 +75,10 @@ class Ranked(DataPoint):
 
   __slots__: tuple[str, ...] = ('rank', 'difference')
 
-  rank: Optional[int]
+  rank: int | None
   """This data point's rank compared to others."""
 
-  difference: Optional[int]
+  difference: int | None
   """This data point's change difference compared to its previous data point."""
 
   def __init__(self, json: dict, key: str):

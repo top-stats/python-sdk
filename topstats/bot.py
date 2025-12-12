@@ -24,7 +24,6 @@ SOFTWARE.
 """
 
 from datetime import datetime, timezone
-from typing import Optional
 
 from .data import Ranked
 
@@ -48,7 +47,7 @@ class BotStats:
   server_count: Ranked
   """The amount servers this bot is in."""
 
-  review_count: Optional[Ranked]
+  review_count: Ranked | None
   """The amount reviews this bot has."""
 
   def __init__(self, json: dict):
@@ -153,7 +152,7 @@ class Bot(PartialBot):
     'monthly_difference',
   )
 
-  topgg_id: Optional[int]
+  topgg_id: int | None
   """This bot's Top.gg ID."""
 
   owners: list[int]
@@ -183,10 +182,10 @@ class Bot(PartialBot):
   timestamp: datetime
   """When this bot was updated by topstats.gg."""
 
-  daily_difference: Optional[float]
+  daily_difference: float | None
   """Difference percentage from the previous day."""
 
-  monthly_difference: Optional[float]
+  monthly_difference: float | None
   """Difference percentage from the previous month."""
 
   def __init__(self, json: dict):
