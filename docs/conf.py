@@ -40,7 +40,7 @@ html_theme_options = {
     "light_logo": "banner-light-mode.svg",
     "dark_logo": "banner-dark-mode.svg",
     "sidebar_hide_name": True,
-    "top_of_page_buttons": None,
+    "top_of_page_buttons": ["edit"],
 }
 html_theme = 'furo'
 html_title = project
