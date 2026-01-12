@@ -44,3 +44,4 @@ html_theme_options = {
 }
 html_theme = 'furo'
 html_title = project
+html_favicon = '_static/favicon.ico'
