@@ -2,7 +2,7 @@
 The MIT License (MIT)
 
 Copyright (c) 2020 Arthurdw
-Copyright (c) 2024-2025 null8626
+Copyright (c) 2024-2026 null8626
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ __credits__ = (__author__,)
 __maintainer__ = __author__
 __status__ = 'Production'
 __license__ = 'MIT'
-__copyright__ = 'Copyright (c) 2020 Arthurdw; Copyright (c) 2024-2025 null8626'
+__copyright__ = 'Copyright (c) 2020 Arthurdw; Copyright (c) 2024-2026 null8626'
 __version__ = VERSION
 __all__ = (
   'Bot',
