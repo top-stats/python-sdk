@@ -8,7 +8,7 @@ A simple API wrapper for [topstats.gg](https://topstats.gg) written in Python.
 
 ## Getting started
 
-Make sure you already have an API token handy. See [this page](https://docs.topstats.gg/authentication/tokens) on how to retrieve it.
+Make sure you already have an API token handy. See [this page](https://docs.topstats.gg/docs/authentication/tokens) on how to retrieve it.
 
 After that, run the following command in your terminal:
 
