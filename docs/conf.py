@@ -36,5 +36,10 @@ html_css_files = [
 ]
 html_js_files = ['script.js']
 html_static_path = ['_static']
+html_theme_options = {
+    "light_logo": "banner-light-mode.svg",
+    "dark_logo": "banner-dark-mode.svg",
+    "sidebar_hide_name": True,
+}
 html_theme = 'furo'
 html_title = project
