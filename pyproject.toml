@@ -9,7 +9,7 @@ readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "null8626" }]
 keywords = ["discord", "discord-bot", "topgg"]
-dependencies = ["aiohttp>=3.13.2", "yarl>=1.22.0"]
+dependencies = ["aiohttp>=3.13.3", "yarl>=1.22.0"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
