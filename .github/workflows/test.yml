@@ -32,6 +32,7 @@ jobs:
         if: ${{ matrix.python-version == 3.14 }}
         run: python3 -m pip install ruff
       - name: Run tests
+        if: ${{ github.event_name != 'pull_request' }}
         run: python3 -m pytest
         env:
           TOPSTATS_TOKEN: ${{ secrets.TOPSTATS_TOKEN }}
