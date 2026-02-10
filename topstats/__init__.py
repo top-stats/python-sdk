@@ -22,7 +22,7 @@ __credits__ = (__author__,)
 __maintainer__ = __author__
 __status__ = 'Production'
 __license__ = 'MIT'
-__copyright__ = 'Copyright (c) 2020 Arthurdw; Copyright (c) 2024-2025 null8626'
+__copyright__ = 'Copyright (c) 2020 Arthurdw; Copyright (c) 2024-2026 null8626'
 __version__ = VERSION
 __all__ = (
   'Bot',
