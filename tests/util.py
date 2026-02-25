@@ -116,7 +116,7 @@ class RequestMock:
   __mock_response: mock.Mock
   __mock_json_response: 'TextIOWrapper | None'
 
-  def __init__(self, status: int, reason: str, mock_response: str | dict | None = None):
+  def __init__(self, status: int, reason: str, response: str | dict | None = None):
     self.__mock_response = mock.Mock(specs=aiohttp.ClientResponse)
 
     self.__mock_response.status = status
@@ -124,13 +124,13 @@ class RequestMock:
 
     self.__mock_json_response = None
 
-    if isinstance(mock_response, str):
-      self.__mock_json_response = open(path.join(CURRENT_DIR, mock_response), 'r')
+    if isinstance(response, str):
+      self.__mock_json_response = open(path.join(CURRENT_DIR, response), 'r')
       self.__mock_response.json = mock.AsyncMock(
         return_value=json.loads(self.__mock_json_response.read())
       )
-    elif mock_response is not None:
-      self.__mock_response.json = mock.AsyncMock(return_value=mock_response)
+    elif response is not None:
+      self.__mock_response.json = mock.AsyncMock(return_value=response)
 
     raise_for_status_kwargs = {}
 
