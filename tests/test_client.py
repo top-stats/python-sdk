@@ -39,6 +39,10 @@ def test_Client_attributes_work(client: topstats.Client) -> None:
 @pytest.mark.asyncio
 async def test_Client_basic_error_handling_works() -> None:
   with pytest.raises(TypeError, match='^An API token is required to use this API.$'):
+    async with topstats.Client(None):
+      pass
+
+  with pytest.raises(ValueError, match='^An API token is required to use this API.$'):
     async with topstats.Client(''):
       pass
 
