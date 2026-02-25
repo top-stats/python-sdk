@@ -11,7 +11,7 @@ from time import time
 from re import sub
 import json
 
-from .errors import Error, RequestError, Ratelimited
+from .errors import Error, Ratelimited, RequestError
 from .ratelimiter import Ratelimiter, Ratelimiters
 from .bot import Bot, PartialBot, RecentBotStats
 from .data import Period, SortBy, Timestamped
@@ -31,7 +31,8 @@ class Client:
   :param session: Whether to use an existing :class:`~aiohttp.ClientSession` for requesting or not. Defaults to :py:obj:`None` (creates a new one instead)
   :type session: :class:`~aiohttp.ClientSession` | :py:obj:`None`
 
-  :exception TypeError: ``token`` is not a :py:class:`str` or is empty.
+  :exception TypeError: The specified token is not a string.
+  :exception ValueError: The specified token is empty.
   """
 
   __slots__: tuple[str, ...] = (
@@ -51,8 +52,10 @@ class Client:
   __current_ratelimits: dict[str, float | None]
 
   def __init__(self, token: str, *, session: ClientSession | None = None):
-    if not isinstance(token, str) or not token:
+    if not isinstance(token, str):
       raise TypeError('An API token is required to use this API.')
+    elif not token:
+      raise ValueError('An API token is required to use this API.')
 
     self.__own_session = session is None
     self.__session = session or ClientSession(
@@ -511,7 +514,7 @@ class Client:
     :param limit: Limit of data to be returned. Defaults to ``100``. This can't exceed ``100``.
     :type limit: :py:class:`int` | :py:obj:`None`
 
-    :exception TypeError: The requested sorting criteria is of invalid type.
+    :exception TypeError: The requested sorting criteria's type is invalid.
     :exception Error: The client is already closed.
     :exception RequestError: The client received a non-favorable response from the API.
     :exception Ratelimited: Ratelimited from sending more requests.
@@ -521,7 +524,7 @@ class Client:
     """
 
     if not isinstance(sort_by, SortBy):  # pragma: nocover
-      raise TypeError('The requested sorting criteria is of invalid type.')
+      raise TypeError("The requested sorting criteria's type is invalid.")
 
     t = await self.__get(
       '/discord/rankings/bots',

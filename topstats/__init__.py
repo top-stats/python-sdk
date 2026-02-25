@@ -9,7 +9,7 @@ from .bot import (
   RecentBotStats,
   TimestampedBotStats,
 )
-from .errors import Error, RequestError, Ratelimited
+from .errors import Error, Ratelimited, RequestError
 from .data import Period, SortBy, Timestamped
 from .ratelimiter import Ratelimiter
 from .version import VERSION
