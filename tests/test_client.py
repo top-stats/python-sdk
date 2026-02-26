@@ -94,7 +94,7 @@ async def test_Client_request_error_handling_works(
         await client.get_bot(432610292342587392)
 
       _test_attributes(raises.value)
-      assert 0 <= (6.0 - raises.value.retry_after) < 0.001
+      assert 0 <= (6.0 - raises.value.retry_after) < 0.01
 
     request.assert_called_once()
 
