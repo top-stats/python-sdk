@@ -11,7 +11,7 @@ on:
   workflow_dispatch: null
 jobs:
   test:
-    name: Run tests
+    name: Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
