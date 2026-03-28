@@ -1,7 +1,6 @@
-name: Run tests
+name: Test
 on:
   push:
-    branches: [master]
     paths:
       - '.github/workflows/test.yml'
       - 'topstats/**/*.py'
